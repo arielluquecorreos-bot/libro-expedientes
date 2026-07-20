@@ -1,0 +1,3807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a56a0">
+<title>Libro Digital - D.G.C.O.G.J.</title>
+<link rel="manifest" href="data:application/json,{}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+  :root {
+    --primary: #1a56a0;
+    --primary-dark: #123d78;
+    --primary-light: #e8f0fb;
+    --accent: #2a9d5c;
+    --accent-light: #e6f7ee;
+    --danger: #c0392b;
+    --danger-light: #fdecea;
+    --warning: #e67e22;
+    --warning-light: #fef5e7;
+    --gray-50: #f8f9fa;
+    --gray-100: #f1f3f5;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-400: #ced4da;
+    --gray-500: #adb5bd;
+    --gray-600: #6c757d;
+    --gray-700: #495057;
+    --gray-800: #343a40;
+    --gray-900: #212529;
+    --white: #ffffff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow: 0 2px 8px rgba(0,0,0,0.12);
+    --shadow-lg: 0 4px 20px rgba(0,0,0,0.15);
+    --radius: 8px;
+    --radius-lg: 12px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--gray-100);
+    color: var(--gray-900);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    color: white;
+    padding: 0;
+    box-shadow: var(--shadow-lg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  .header-logo {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .header-title { flex: 1; }
+  .header-title h1 { font-size: 15px; font-weight: 700; letter-spacing: 0.3px; }
+  .header-title p { font-size: 11px; opacity: 0.8; margin-top: 1px; }
+  .sync-badge {
+    font-size: 11px;
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .sync-badge:hover { background: rgba(255,255,255,0.25); }
+  .sync-badge.syncing { animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  /* TABS */
+  .main-tabs {
+    display: flex;
+    background: rgba(0,0,0,0.25);
+    gap: 2px;
+    padding: 6px 6px 0;
+  }
+  .main-tab {
+    flex: 1;
+    padding: 9px 6px 10px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.75);
+    cursor: pointer;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.07);
+    position: relative;
+    bottom: 0;
+  }
+  .main-tab:hover {
+    background: rgba(255,255,255,0.15);
+    color: white;
+  }
+
+  /* Colores individuales por pestaña */
+  .main-tab:nth-child(1).active { background: #1565c0; color: white; border-bottom-color: #90caf9; box-shadow: 0 -2px 8px rgba(21,101,192,0.5); }
+  .main-tab:nth-child(2).active { background: #2e7d32; color: white; border-bottom-color: #a5d6a7; box-shadow: 0 -2px 8px rgba(46,125,50,0.5); }
+  .main-tab:nth-child(3).active { background: #6a1b9a; color: white; border-bottom-color: #ce93d8; box-shadow: 0 -2px 8px rgba(106,27,154,0.5); }
+  .main-tab:nth-child(4).active { background: #e65100; color: white; border-bottom-color: #ffcc80; box-shadow: 0 -2px 8px rgba(230,81,0,0.5); }
+  .main-tab:nth-child(5).active { background: #37474f; color: white; border-bottom-color: #b0bec5; box-shadow: 0 -2px 8px rgba(55,71,79,0.5); }
+
+  /* Indicadores de color inactivos */
+  .main-tab:nth-child(1) { border-top: 3px solid #90caf9; }
+  .main-tab:nth-child(2) { border-top: 3px solid #a5d6a7; }
+  .main-tab:nth-child(3) { border-top: 3px solid #ce93d8; }
+  .main-tab:nth-child(4) { border-top: 3px solid #ffcc80; }
+  .main-tab:nth-child(5) { border-top: 3px solid #b0bec5; }
+
+  .main-tab.active {
+    color: white;
+    position: relative;
+    bottom: -1px;
+    z-index: 2;
+  }
+
+  /* CONTENT */
+  .content { max-width: 900px; margin: 0 auto; padding: 16px; }
+
+  /* SECTION TABS */
+  .section-tabs {
+    display: flex;
+    gap: 4px;
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 4px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+  }
+  .section-tab {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .section-tab.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* CARD */
+  .card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 16px;
+    background: var(--primary-light);
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-header h2 { font-size: 14px; font-weight: 700; color: var(--primary-dark); }
+  .card-icon { font-size: 18px; }
+  .card-body { padding: 16px; }
+
+  /* FORM GRID */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-grid .full { grid-column: 1 / -1; }
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid .full { grid-column: 1; }
+  }
+
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .field input, .field textarea, .field select {
+    border: 1.5px solid var(--gray-300);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 14px;
+    font-family: var(--font);
+    color: var(--gray-900);
+    background: white;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    width: 100%;
+    text-transform: uppercase;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26,86,160,0.12);
+  }
+  .field textarea { min-height: 70px; resize: vertical; }
+  .field input[type="date"] { cursor: pointer; }
+
+  /* AUTOCOMPLETE */
+  .autocomplete-wrap { position: relative; }
+  .autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1.5px solid var(--primary);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 50;
+    box-shadow: var(--shadow);
+  }
+  .autocomplete-list li {
+    padding: 8px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    list-style: none;
+    transition: background 0.15s;
+  }
+  .autocomplete-list li:hover, .autocomplete-list li.selected { background: var(--primary-light); }
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .tag {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border: 1px solid #b8d1f0;
+    border-radius: 20px;
+    padding: 3px 10px 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .tag-remove {
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: bold;
+    line-height: 1;
+  }
+  .tag-remove:hover { color: var(--danger); }
+
+  /* CHECKBOX GROUP */
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-300);
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .checkbox-item input { cursor: pointer; accent-color: var(--primary); }
+  .checkbox-item:has(input:checked) {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+  }
+
+  /* RADIO GROUP */
+  .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .radio-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-300);
+    border-radius: 6px;
+    padding: 7px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .radio-item input { cursor: pointer; accent-color: var(--primary); }
+  .radio-item:has(input:checked) {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font);
+    letter-spacing: 0.3px;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .btn-success { background: var(--accent); color: white; }
+  .btn-success:hover { background: #218c4b; transform: translateY(-1px); box-shadow: var(--shadow); }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: #a93226; }
+  .btn-outline {
+    background: transparent;
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+  }
+  .btn-outline:hover { background: var(--primary-light); }
+  .btn-ghost {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1.5px solid var(--gray-300);
+  }
+  .btn-ghost:hover { background: var(--gray-200); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-full { width: 100%; justify-content: center; }
+
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+  /* SEARCH BAR */
+  .search-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .search-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .search-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 600px) { .search-grid { grid-template-columns: 1fr; } }
+  .search-input-wrap { position: relative; }
+  .search-input-wrap input {
+    width: 100%;
+    padding: 8px 10px 8px 34px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    text-transform: uppercase;
+  }
+  .search-input-wrap input:focus { border-color: var(--primary); }
+  .search-input-wrap::before {
+    content: '🔍';
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    pointer-events: none;
+  }
+  .search-btn-row { display: flex; gap: 8px; margin-top: 10px; }
+  .result-count {
+    font-size: 12px;
+    color: var(--gray-600);
+    margin-top: 8px;
+    padding: 4px 8px;
+    background: var(--gray-50);
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  /* TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    background: white;
+    min-width: 700px;
+  }
+  th {
+    background: var(--primary);
+    color: white;
+    padding: 9px 10px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--primary-light); }
+  .action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background 0.15s;
+  }
+  .action-btn:hover { background: var(--gray-200); }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .modal {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 700px;
+    margin: auto;
+  }
+  .modal-header {
+    padding: 16px 20px;
+    background: var(--primary-light);
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-header h3 { font-size: 15px; font-weight: 700; color: var(--primary-dark); }
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--gray-600);
+    line-height: 1;
+    padding: 0 4px;
+  }
+  .modal-body { padding: 20px; }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 16px;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toast {
+    background: var(--gray-900);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    animation: slideIn 0.3s ease;
+    max-width: 280px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toast.success { background: var(--accent); }
+  .toast.error { background: var(--danger); }
+  .toast.info { background: var(--primary); }
+  @keyframes slideIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray-500);
+  }
+  .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* STATUS BADGE */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge-blue { background: var(--primary-light); color: var(--primary-dark); }
+  .badge-green { background: var(--accent-light); color: #1a6b3c; }
+
+  /* LOADER */
+  .loader {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+
+  /* DETAIL VIEW */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 500px) { .detail-grid { grid-template-columns: 1fr; } }
+  .detail-item label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    letter-spacing: 0.5px;
+  }
+  .detail-item p {
+    font-size: 13px;
+    color: var(--gray-900);
+    margin-top: 2px;
+    word-break: break-word;
+  }
+  .detail-item.full { grid-column: 1/-1; }
+
+  /* SETTINGS URLS */
+  .config-section { margin-bottom: 20px; }
+  .config-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gray-600); margin-bottom: 6px; }
+  .config-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: monospace;
+  }
+
+  /* DIST BADGE */
+  .dist-5 { background: #dbeafe; color: #1e40af; }
+  .dist-10 { background: #d1fae5; color: #065f46; }
+  .dist-15 { background: #fef3c7; color: #92400e; }
+
+  /* ESTADO PENDIENTE/FINALIZADO */
+  .estado-pendiente {
+    background: #fff8e1;
+    border-left: 4px solid #f59e0b !important;
+  }
+  .estado-finalizado {
+    background: #f0fdf4;
+    border-left: 4px solid #22c55e !important;
+  }
+  .badge-pendiente {
+    background: #fef3c7; color: #92400e;
+    padding: 3px 8px; border-radius: 12px;
+    font-size: 10px; font-weight: 700;
+    white-space: nowrap;
+  }
+  .badge-finalizado {
+    background: #dcfce7; color: #166534;
+    padding: 3px 8px; border-radius: 12px;
+    font-size: 10px; font-weight: 700;
+    white-space: nowrap;
+  }
+  .toggle-estado {
+    background: none; border: none; cursor: pointer;
+    font-size: 18px; padding: 2px; line-height: 1;
+    transition: transform 0.2s;
+  }
+  .toggle-estado:hover { transform: scale(1.3); }
+  .emp-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .emp-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.2s;
+    border: 1.5px solid var(--gray-200);
+  }
+  .emp-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+  .emp-card-header {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .emp-avatar {
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700;
+    flex-shrink: 0;
+    font-family: var(--font);
+  }
+  .emp-card-name { font-size: 13px; font-weight: 700; line-height: 1.3; }
+  .emp-card-sub { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+  .emp-card-body { padding: 12px 16px; }
+  .emp-info-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--gray-700);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .emp-info-row:last-child { border-bottom: none; }
+  .emp-info-label { font-size: 10px; font-weight: 700; color: var(--gray-500); min-width: 60px; text-transform: uppercase; }
+  .emp-birthday-badge {
+    background: #fff3cd; color: #856404;
+    border: 1px solid #ffc107;
+    border-radius: 20px; padding: 2px 8px;
+    font-size: 11px; font-weight: 700;
+  }
+  .section-divider {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    color: var(--primary); letter-spacing: 0.8px;
+    padding: 10px 0 6px;
+    border-bottom: 2px solid var(--primary-light);
+    margin: 14px 0 10px;
+    grid-column: 1/-1;
+  }
+  .subsection {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 12px;
+    margin-top: 4px;
+  }
+  .subsection-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    color: var(--gray-600); letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .age-display {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--primary-light); color: var(--primary-dark);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 13px; font-weight: 700;
+    margin-top: 4px;
+  }
+  /* Modal tabs for empleado detail */
+  .modal-tabs {
+    display: flex; gap: 4px;
+    padding: 12px 20px 0;
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-50);
+  }
+  .modal-tab {
+    padding: 7px 14px;
+    font-size: 12px; font-weight: 600;
+    color: var(--gray-600);
+    border: none; background: none; cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+    border-radius: 4px 4px 0 0;
+  }
+  .modal-tab.active { color: var(--primary); border-bottom-color: var(--primary); background: white; }
+  .modal-tab-content { display: none; }
+  .modal-tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-top">
+    <div class="header-logo">📋</div>
+    <div class="header-title">
+      <h1>LIBRO DIGITAL</h1>
+      <p>D.G.C.O.G.J. — Distrito Judicial N°5</p>
+    </div>
+    <div class="sync-badge" id="syncStatus" onclick="manualSync()">⚡ Listo</div>
+  </div>
+  <div class="main-tabs">
+    <div class="main-tab active" onclick="switchModule('expedientes')">📁 Expedientes</div>
+    <div class="main-tab" onclick="switchModule('elementos')">📦 Elementos</div>
+    <div class="main-tab" onclick="switchModule('empleados')">👤 Datos Personales</div>
+    <div class="main-tab" onclick="switchModule('licencias')">📅 Licencias</div>
+    <div class="main-tab" onclick="switchModule('config')">⚙️ Config</div>
+  </div>
+</header>
+
+<!-- =================== MÓDULO EXPEDIENTES =================== -->
+<div id="mod-expedientes" class="content">
+  <div class="section-tabs">
+    <button class="section-tab active" onclick="switchTab('exp','form')">➕ Nuevo Registro</button>
+    <button class="section-tab" onclick="switchTab('exp','list')">📋 Ver Registros</button>
+  </div>
+
+  <!-- FORMULARIO EXPEDIENTES -->
+  <div id="exp-form">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">📁</span>
+        <h2>Nuevo Registro — Libro de Expedientes</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+
+          <!-- Fecha -->
+          <div class="field">
+            <label>📅 Fecha</label>
+            <input type="date" id="ef-fecha">
+          </div>
+
+          <!-- Foja -->
+          <div class="field">
+            <label>📖 N° de Foja</label>
+            <input type="text" id="ef-foja" placeholder="Ej: 254">
+          </div>
+
+          <!-- Expediente -->
+          <div class="field full">
+            <label>📄 Expediente</label>
+            <input type="text" id="ef-expediente" placeholder="Ej: LETRA C 405/18 DGMLP  /  E 2413">
+          </div>
+
+          <!-- Distrito -->
+          <div class="field">
+            <label>🏛️ Distrito</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="ef-distrito" value="5"> Distrito 5</label>
+              <label class="radio-item"><input type="radio" name="ef-distrito" value="10"> Distrito 10</label>
+              <label class="radio-item"><input type="radio" name="ef-distrito" value="15"> Distrito 15</label>
+            </div>
+          </div>
+
+          <!-- Empleado (multi-tag autocomplete) -->
+          <div class="field">
+            <label>👤 Empleado/s</label>
+            <div id="empleadosTags" class="tags-container"></div>
+            <div class="autocomplete-wrap">
+              <input type="text" id="ef-empleado-input" placeholder="Escribí para buscar..." autocomplete="off" oninput="filterEmpleados(this.value)" onkeydown="empleadoKeyDown(event)">
+              <ul class="autocomplete-list hidden" id="empleadoList"></ul>
+            </div>
+          </div>
+
+          <!-- Resoluciones -->
+          <div class="field">
+            <label>📜 Resoluciones</label>
+            <input type="text" id="ef-resoluciones" placeholder="Ej: RES. J.P.P. 1676  /  1595/25 DE FECHA 24/9/25">
+          </div>
+
+          <!-- Radiogramas -->
+          <div class="field">
+            <label>📡 Radiogramas</label>
+            <input type="text" id="ef-radiogramas" placeholder="Ej: 50/26  /  varios separados por coma">
+          </div>
+
+          <!-- Resoluciones 2 -->
+          <div class="field">
+            <label>📋 Resoluciones (2)</label>
+            <input type="text" id="ef-resoluciones2" placeholder="Ej: 035/26  /  varios">
+          </div>
+
+          <!-- OSPE -->
+          <div class="field">
+            <label>🏥 OSPE</label>
+            <input type="text" id="ef-ospe" placeholder="Ej: 067  /  0106  /  099">
+          </div>
+
+          <!-- Art. -->
+          <div class="field full">
+            <label>⚖️ Art. 80-82-83-84</label>
+            <div class="checkbox-group">
+              <label class="checkbox-item"><input type="checkbox" value="80" class="ef-art"> Art. 80</label>
+              <label class="checkbox-item"><input type="checkbox" value="82" class="ef-art"> Art. 82</label>
+              <label class="checkbox-item"><input type="checkbox" value="83" class="ef-art"> Art. 83</label>
+              <label class="checkbox-item"><input type="checkbox" value="84" class="ef-art"> Art. 84</label>
+            </div>
+            <input type="text" id="ef-art-extra" placeholder="Incisos u otros (ej: 82 c, 83 b)" style="margin-top:8px">
+          </div>
+
+          <!-- Logística -->
+          <div class="field full">
+            <label>🚚 Logística</label>
+            <textarea id="ef-logistica" placeholder="Documentación enviada a logística..."></textarea>
+          </div>
+
+          <!-- Otro -->
+          <div class="field full">
+            <label>📌 Otro</label>
+            <textarea id="ef-otro" placeholder="Otras observaciones no contempladas..."></textarea>
+          </div>
+
+          <!-- Referencia -->
+          <div class="field full">
+            <label>🔖 Referencia / Descripción</label>
+            <textarea id="ef-referencia" placeholder="Descripción relacionada a lo que se entrega..."></textarea>
+          </div>
+
+          <!-- Viene de -->
+          <div class="field">
+            <label>📥 Viene de</label>
+            <input type="text" id="ef-vienede" placeholder="Origen de la documentación">
+          </div>
+
+          <!-- Entregado a -->
+          <div class="field">
+            <label>📤 Entregado a</label>
+            <div class="autocomplete-wrap">
+              <input type="text" id="ef-entregadoa" placeholder="Destino de la documentación" autocomplete="off">
+              <ul class="autocomplete-list hidden" id="ef-entregadoa-list"></ul>
+            </div>
+          </div>
+
+          <!-- Estado -->
+          <div class="field full">
+            <label>📌 Estado del expediente</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="ef-estado" value="pendiente" checked> 🟡 Pendiente</label>
+              <label class="radio-item"><input type="radio" name="ef-estado" value="finalizado"> 🟢 Finalizado / Entregado</label>
+            </div>
+          </div>
+
+          <!-- Link documento -->
+          <div class="field full">
+            <label>📎 Link de documento (Drive, PDF, imagen)</label>
+            <input type="text" id="ef-link-doc" placeholder="Pegá acá el link del documento relacionado" style="text-transform:none">
+            <p style="font-size:11px;color:var(--gray-500);margin-top:3px">Subí el archivo a Drive y pegá el link acá para tenerlo asociado al expediente.</p>
+          </div>
+
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-success" onclick="guardarExpediente()">💾 Guardar Registro</button>
+          <button class="btn btn-ghost" onclick="limpiarExpediente()">🗑️ Limpiar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA EXPEDIENTES -->
+  <div id="exp-list" class="hidden">
+    <div class="search-card">
+      <div class="search-title">🔍 Buscar en Registros</div>
+
+      <!-- FILTROS RÁPIDOS -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--gray-200)">
+        <div style="flex:1;min-width:130px">
+          <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">📅 Mes de carga</label>
+          <select id="s-mes" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;background:white;outline:none" onchange="buscarExpedientes()">
+            <option value="">— Todos los meses —</option>
+            <option value="01">Enero</option>
+            <option value="02">Febrero</option>
+            <option value="03">Marzo</option>
+            <option value="04">Abril</option>
+            <option value="05">Mayo</option>
+            <option value="06">Junio</option>
+            <option value="07">Julio</option>
+            <option value="08">Agosto</option>
+            <option value="09">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:110px">
+          <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">📅 Año</label>
+          <select id="s-anio" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;background:white;outline:none" onchange="buscarExpedientes()">
+            <option value="">— Todos —</option>
+            <option value="22">2022</option>
+            <option value="23">2023</option>
+            <option value="24">2024</option>
+            <option value="25">2025</option>
+            <option value="26">2026</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:130px">
+          <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">📌 Estado</label>
+          <select id="s-estado" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;background:white;outline:none" onchange="buscarExpedientes()">
+            <option value="">— Todos —</option>
+            <option value="pendiente">🟡 Pendientes</option>
+            <option value="finalizado">🟢 Finalizados</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosExp()">↩ Limpiar</button>
+        </div>
+      </div>
+
+      <!-- FILTRO PRESENCIA DE CAMPO -->
+      <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--gray-200)">
+        <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px">✅ Mostrar solo registros que tengan:</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="ospe" onchange="buscarExpedientes()"> OSPE</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="resoluciones" onchange="buscarExpedientes()"> Resolución</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="radiogramas" onchange="buscarExpedientes()"> Radiogramas</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="articulos" onchange="buscarExpedientes()"> Artículo</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="expediente" onchange="buscarExpedientes()"> Expediente</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="logistica" onchange="buscarExpedientes()"> Logística</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="entregadoa" onchange="buscarExpedientes()"> Entregado a</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="referencia" onchange="buscarExpedientes()"> Referencia</label>
+        </div>
+      </div>
+
+      <div class="search-grid">
+        <div class="search-input-wrap">
+          <input type="text" id="s-empleado" placeholder="Empleado">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="s-expediente" placeholder="Expediente">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="s-resolucion" placeholder="Resolución">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="s-fecha" placeholder="Fecha (dd/mm/aaaa)">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="s-foja" placeholder="N° Foja">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="s-art" placeholder="Artículo (ej: 82)">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="s-ospe" placeholder="OSPE">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="s-distrito" placeholder="Distrito (5/10/15)">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="s-ref" placeholder="Referencia / texto libre">
+        </div>
+      </div>
+      <div id="resultCount-exp" class="result-count hidden"></div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="tablaExpedientes">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Foja</th>
+            <th>Expediente</th>
+            <th>Empleado</th>
+            <th>Distrito</th>
+            <th>Resol.</th>
+            <th>OSPE</th>
+            <th>Art.</th>
+            <th>Viene de</th>
+            <th>Entregado a</th>
+            <th>Ref.</th>
+          </tr>
+        </thead>
+        <tbody id="expTbody"></tbody>
+      </table>
+    </div>
+    <div id="exp-initial" class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <p>Usá los filtros de arriba para buscar registros.</p>
+    </div>
+    <div id="exp-empty" class="empty-state hidden">
+      <div class="empty-icon">📂</div>
+      <p>No se encontraron registros.</p>
+    </div>
+  </div>
+</div>
+
+<!-- =================== MÓDULO ELEMENTOS =================== -->
+<div id="mod-elementos" class="content hidden">
+  <div class="section-tabs">
+    <button class="section-tab active" onclick="switchTab('elem','form')">➕ Nuevo Elemento</button>
+    <button class="section-tab" onclick="switchTab('elem','list')">📦 Ver Elementos</button>
+  </div>
+
+  <!-- FORMULARIO ELEMENTOS -->
+  <div id="elem-form">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">📦</span>
+        <h2>Nuevo Registro — Elementos de Entrega</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+
+          <div class="field">
+            <label>📅 Fecha de carga</label>
+            <input type="date" id="el-fecha">
+          </div>
+
+          <div class="field">
+            <label>📥 Fecha de recepción</label>
+            <input type="date" id="el-fecha-recibido">
+          </div>
+
+          <div class="field full">
+            <label>📦 Elemento</label>
+            <input type="text" id="el-elemento" placeholder="Ej: Resma de hojas A4, Tóner, Lápices x 12...">
+          </div>
+
+          <div class="field">
+            <label>👤 Entrega a</label>
+            <div class="autocomplete-wrap">
+              <input type="text" id="el-entregaa" placeholder="Persona que recibe" autocomplete="off">
+              <ul class="autocomplete-list hidden" id="el-entregaa-list"></ul>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>📅 Fecha de entrega</label>
+            <input type="date" id="el-fecha-entrega">
+          </div>
+
+          <div class="field full">
+            <label>🚚 Cómo se entrega</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="el-como" value="Personalmente"> Personalmente</label>
+              <label class="radio-item"><input type="radio" name="el-como" value="Por correo"> Por correo</label>
+              <label class="radio-item"><input type="radio" name="el-como" value="Por logística"> Por logística</label>
+              <label class="radio-item"><input type="radio" name="el-como" value="Otro"> Otro</label>
+            </div>
+          </div>
+
+          <div class="field full">
+            <label>📝 Observaciones</label>
+            <textarea id="el-obs" placeholder="Observaciones adicionales..."></textarea>
+          </div>
+
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-success" onclick="guardarElemento()">💾 Guardar</button>
+          <button class="btn btn-ghost" onclick="limpiarElemento()">🗑️ Limpiar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA ELEMENTOS -->
+  <div id="elem-list" class="hidden">
+    <div class="search-card">
+      <div class="search-title">🔍 Buscar Elementos</div>
+      <div class="search-grid">
+        <div class="search-input-wrap">
+          <input type="text" id="se-elemento" placeholder="Elemento">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="se-entregaa" placeholder="Entrega a">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="se-fecha" placeholder="Fecha (dd/mm/aaaa)">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="se-como" placeholder="Cómo se entrega">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="se-obs" placeholder="Observaciones">
+        </div>
+      </div>
+      <div class="search-btn-row">
+        <button class="btn btn-primary btn-sm" onclick="buscarElementos()">🔍 Buscar</button>
+        <button class="btn btn-ghost btn-sm" onclick="limpiarBusqueda('elem'); cargarTablaElementos(elementos)">↩ Mostrar todos</button>
+        <button class="btn btn-outline btn-sm" onclick="sincronizarDesdeSheets()">🔄 Actualizar desde Sheets</button>
+        <button class="btn btn-sm" style="background:#c0392b;color:white" onclick="generarPDF('elem')">📄 Generar PDF</button>
+      </div>
+      <div id="resultCount-elem" class="result-count hidden"></div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="tablaElementos">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Fecha carga</th>
+            <th>Elemento</th>
+            <th>F. Recibido</th>
+            <th>Entrega a</th>
+            <th>F. Entrega</th>
+            <th>Cómo</th>
+            <th>Obs.</th>
+          </tr>
+        </thead>
+        <tbody id="elemTbody"></tbody>
+      </table>
+    </div>
+    <div id="elem-initial" class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <p>Usá los filtros de arriba para buscar elementos.</p>
+    </div>
+    <div id="elem-empty" class="empty-state hidden">
+      <div class="empty-icon">📦</div>
+      <p>No se encontraron elementos.</p>
+    </div>
+  </div>
+</div>
+
+<!-- =================== MÓDULO EMPLEADOS =================== -->
+<div id="mod-empleados" class="content hidden">
+  <div class="section-tabs">
+    <button class="section-tab active" onclick="switchTab('emp','form')">➕ Nuevo Empleado</button>
+    <button class="section-tab" onclick="switchTab('emp','list')">👮 Ver Empleados</button>
+  </div>
+
+  <!-- FORMULARIO EMPLEADO -->
+  <div id="emp-form">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">👮</span>
+        <h2>Datos del Empleado</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+
+          <!-- Datos personales -->
+          <div class="section-divider">👤 Datos Personales</div>
+
+          <div class="field full">
+            <label>Nombre Completo</label>
+            <div class="autocomplete-wrap">
+              <input type="text" id="emp-nombre" placeholder="Apellido, Nombre completo" autocomplete="off">
+              <ul class="autocomplete-list hidden" id="emp-nombre-list"></ul>
+            </div>
+          </div>
+          <div class="field">
+            <label>DNI</label>
+            <input type="text" id="emp-dni" placeholder="Ej: 28.456.789">
+          </div>
+          <div class="field">
+            <label>NI (Número de Identificación)</label>
+            <input type="text" id="emp-ni" placeholder="Ej: 34521">
+          </div>
+          <div class="field">
+            <label>CUIL</label>
+            <input type="text" id="emp-cuil" placeholder="Ej: 20-28456789-3">
+          </div>
+          <div class="field">
+            <label>📧 Email</label>
+            <input type="text" id="emp-email" placeholder="Ej: nombre@policia.gov.ar" style="text-transform:none">
+          </div>
+          <div class="field">
+            <label>Jerarquía</label>
+            <input type="text" id="emp-jerarquia" placeholder="Ej: Cabo, Sargento, Oficial...">
+          </div>
+          <div class="field">
+            <label>Distrito</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="emp-distrito" value="5"> Distrito 5</label>
+              <label class="radio-item"><input type="radio" name="emp-distrito" value="10"> Distrito 10</label>
+              <label class="radio-item"><input type="radio" name="emp-distrito" value="15"> Distrito 15</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>📅 Fecha de Nacimiento</label>
+            <input type="date" id="emp-nacimiento" onchange="mostrarEdadPreview()">
+            <div id="emp-edad-preview" style="margin-top:6px"></div>
+          </div>
+          <div class="field">
+            <label>📅 Fecha de Cumpleaños</label>
+            <input type="date" id="emp-cumple" placeholder="Puede ser igual a nacimiento">
+          </div>
+          <div class="field">
+            <label>📞 Teléfono</label>
+            <input type="text" id="emp-telefono" placeholder="Ej: 3492-123456">
+          </div>
+          <div class="field">
+            <label>🩸 Grupo Sanguíneo</label>
+            <select id="emp-sangre">
+              <option value="">— Seleccionar —</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>AB+</option><option>AB-</option>
+              <option>O+</option><option>O-</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>🏠 Dirección Personal</label>
+            <input type="text" id="emp-direccion" placeholder="Calle, número, ciudad">
+          </div>
+          <div class="field full">
+            <label>🏛️ Dirección Comisaría / Jurisdicción</label>
+            <input type="text" id="emp-comisaria" placeholder="Nombre y dirección de la comisaría">
+          </div>
+
+          <!-- Arma -->
+          <div class="section-divider">🔫 Arma Provista</div>
+
+          <div class="field full">
+            <div class="subsection">
+              <div class="subsection-title">🔫 Datos del Arma</div>
+              <div class="form-grid" style="gap:10px">
+                <div class="field">
+                  <label>Marca</label>
+                  <input type="text" id="arma-marca" placeholder="Ej: Bersa, Glock">
+                </div>
+                <div class="field">
+                  <label>Modelo</label>
+                  <input type="text" id="arma-modelo" placeholder="Ej: Thunder 9mm">
+                </div>
+                <div class="field">
+                  <label>Número de Serie</label>
+                  <input type="text" id="arma-serie" placeholder="Ej: A-123456">
+                </div>
+                <div class="field">
+                  <label>Cantidad de Cargadores</label>
+                  <input type="number" id="arma-cargadores" placeholder="Ej: 2" min="0">
+                </div>
+                <div class="field">
+                  <label>Municiones</label>
+                  <input type="text" id="arma-municiones" placeholder="Ej: 30 / 9mm FMJ">
+                </div>
+                <div class="field">
+                  <label>Remarque</label>
+                  <input type="text" id="arma-remarque" placeholder="Observaciones del arma">
+                </div>
+                <div class="field">
+                  <label>📅 Fecha de Asignación</label>
+                  <input type="date" id="arma-fecha-asignacion">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chaleco -->
+          <div class="section-divider">🦺 Chaleco Provisto</div>
+
+          <div class="field full">
+            <div class="subsection">
+              <div class="subsection-title">🦺 Datos del Chaleco</div>
+              <div class="form-grid" style="gap:10px">
+                <div class="field">
+                  <label>Marca</label>
+                  <input type="text" id="chaleco-marca" placeholder="Ej: Safariland">
+                </div>
+                <div class="field">
+                  <label>Modelo</label>
+                  <input type="text" id="chaleco-modelo" placeholder="Ej: Level IIIA">
+                </div>
+                <div class="field">
+                  <label>Número de Serie</label>
+                  <input type="text" id="chaleco-serie" placeholder="Ej: CH-789">
+                </div>
+                <div class="field">
+                  <label>Nivel</label>
+                  <input type="text" id="chaleco-nivel" placeholder="Ej: Nivel IIIA, Nivel II...">
+                </div>
+                <div class="field">
+                  <label>Talle</label>
+                  <select id="chaleco-talle">
+                    <option value="">— Seleccionar —</option>
+                    <option>XS</option><option>S</option><option>M</option>
+                    <option>L</option><option>XL</option><option>XXL</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Lote</label>
+                  <input type="text" id="chaleco-lote" placeholder="Ej: L-2023-001">
+                </div>
+                <div class="field">
+                  <label>📅 Fecha de Fabricación</label>
+                  <input type="date" id="chaleco-fabricacion">
+                </div>
+                <div class="field">
+                  <label>📅 Fecha de Vencimiento</label>
+                  <input type="date" id="chaleco-vencimiento">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <div class="btn-row">
+          <button class="btn btn-success" onclick="guardarEmpleado()">💾 Guardar Empleado</button>
+          <button class="btn btn-ghost" onclick="limpiarEmpleado()">🗑️ Limpiar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA EMPLEADOS -->
+  <div id="emp-list" class="hidden">
+    <div class="search-card">
+      <div class="search-title">🔍 Buscar Empleados</div>
+      <div class="search-grid">
+        <div class="search-input-wrap">
+          <input type="text" id="semp-nombre" placeholder="Nombre">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="semp-dni" placeholder="DNI">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="semp-ni" placeholder="NI">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="semp-jerarquia" placeholder="Jerarquía">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="semp-distrito" placeholder="Distrito (5/10/15)">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="semp-arma" placeholder="N° Serie Arma">
+        </div>
+      </div>
+      <div class="search-btn-row">
+        <button class="btn btn-primary btn-sm" onclick="buscarEmpleados()">🔍 Buscar</button>
+        <button class="btn btn-ghost btn-sm" onclick="limpiarBusquedaEmp(); cargarTarjetasEmpleados(empleados)">↩ Mostrar todos</button>
+        <button class="btn btn-sm" style="background:#c0392b;color:white" onclick="generarPDF('emp')">📄 Generar PDF</button>
+      </div>
+      <div id="resultCount-emp" class="result-count hidden"></div>
+    </div>
+
+    <div id="emp-initial" class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <p>Usá los filtros de arriba para buscar empleados.</p>
+    </div>
+    <div id="emp-card-grid" class="emp-card-grid"></div>
+    <div id="emp-empty" class="empty-state hidden">
+      <div class="empty-icon">👮</div>
+      <p>No se encontraron empleados.</p>
+    </div>
+  </div>
+</div>
+
+<!-- =================== MÓDULO LICENCIAS =================== -->
+<div id="mod-licencias" class="content hidden">
+  <div class="section-tabs">
+    <button class="section-tab active" onclick="switchTab('lic','form')">➕ Nueva Licencia</button>
+    <button class="section-tab" onclick="switchTab('lic','list')">📋 Ver Licencias</button>
+  </div>
+
+  <!-- FORMULARIO LICENCIAS -->
+  <div id="lic-form">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">📅</span>
+        <h2>Nueva Licencia del Personal</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+
+          <!-- Distrito -->
+          <div class="field full">
+            <label>🏛️ Distrito</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="lic-distrito" value="5"> Distrito 5</label>
+              <label class="radio-item"><input type="radio" name="lic-distrito" value="10"> Distrito 10</label>
+              <label class="radio-item"><input type="radio" name="lic-distrito" value="15"> Distrito 15</label>
+            </div>
+          </div>
+
+          <!-- Nombre -->
+          <div class="field full">
+            <label>👤 Nombre Completo</label>
+            <div class="autocomplete-wrap">
+              <input type="text" id="lic-nombre" placeholder="Apellido, Nombre completo" autocomplete="off">
+              <ul class="autocomplete-list hidden" id="lic-nombre-list"></ul>
+            </div>
+          </div>
+
+          <!-- NI -->
+          <div class="field">
+            <label>🔢 NI</label>
+            <input type="text" id="lic-ni" placeholder="Ej: 34521">
+          </div>
+
+          <!-- DNI -->
+          <div class="field">
+            <label>🪪 DNI</label>
+            <input type="text" id="lic-dni" placeholder="Ej: 28.456.789">
+          </div>
+
+          <!-- Jerarquía -->
+          <div class="field">
+            <label>🎖️ Jerarquía</label>
+            <input type="text" id="lic-jerarquia" placeholder="Ej: Cabo, Sargento, Oficial...">
+          </div>
+
+          <!-- Artículo -->
+          <div class="field">
+            <label>⚖️ Artículo / Inciso</label>
+            <input type="text" id="lic-articulo" placeholder="Ej: Art. 36 Inc. B  /  Art. 42">
+          </div>
+
+          <!-- Fecha salida -->
+          <div class="field">
+            <label>📅 Fecha de Salida</label>
+            <input type="date" id="lic-fecha-salida" onchange="calcularDias()">
+          </div>
+
+          <!-- Fecha final -->
+          <div class="field">
+            <label>📅 Fecha Final</label>
+            <input type="date" id="lic-fecha-final" onchange="calcularDias()">
+          </div>
+
+          <!-- Días hábiles -->
+          <div class="field">
+            <label>📆 Días Hábiles</label>
+            <input type="number" id="lic-dias-habiles" placeholder="Ej: 10" min="0">
+          </div>
+
+          <!-- Días corridos -->
+          <div class="field">
+            <label>📆 Días Corridos</label>
+            <input type="number" id="lic-dias-corridos" placeholder="Ingresá manual o se calcula" min="0">
+          </div>
+
+          <!-- Fracción -->
+          <div class="field">
+            <label>✂️ Fracción</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="lic-fraccion" value="1° FRACCION"> 1° Fracción</label>
+              <label class="radio-item"><input type="radio" name="lic-fraccion" value="2° FRACCION"> 2° Fracción</label>
+              <label class="radio-item"><input type="radio" name="lic-fraccion" value="TOTAL"> Total</label>
+              <label class="radio-item"><input type="radio" name="lic-fraccion" value="NO APLICA"> No aplica</label>
+            </div>
+          </div>
+
+          <!-- Año -->
+          <div class="field">
+            <label>📅 Año</label>
+            <input type="number" id="lic-anio" placeholder="Ej: 2025" min="2000" max="2099">
+          </div>
+
+          <!-- Referencia -->
+          <div class="field full">
+            <label>🔖 Referencia</label>
+            <textarea id="lic-referencia" placeholder="Observaciones, motivo u otra información relevante..."></textarea>
+          </div>
+
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-success" onclick="guardarLicencia()">💾 Guardar Licencia</button>
+          <button class="btn btn-ghost" onclick="limpiarLicencia()">🗑️ Limpiar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA LICENCIAS -->
+  <div id="lic-list" class="hidden">
+    <div class="search-card">
+      <div class="search-title">🔍 Buscar Licencias</div>
+
+      <!-- FILTROS RÁPIDOS: MES Y DISTRITO -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--gray-200)">
+        <div style="flex:1;min-width:140px">
+          <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">📅 Mes de salida</label>
+          <select id="slic-mes" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;color:var(--gray-900);background:white;outline:none" onchange="buscarLicencias()">
+            <option value="">— Todos los meses —</option>
+            <option value="01">Enero</option>
+            <option value="02">Febrero</option>
+            <option value="03">Marzo</option>
+            <option value="04">Abril</option>
+            <option value="05">Mayo</option>
+            <option value="06">Junio</option>
+            <option value="07">Julio</option>
+            <option value="08">Agosto</option>
+            <option value="09">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:140px">
+          <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">🏛️ Distrito</label>
+          <select id="slic-distrito-sel" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;color:var(--gray-900);background:white;outline:none" onchange="buscarLicencias()">
+            <option value="">— Todos —</option>
+            <option value="5">Distrito 5</option>
+            <option value="10">Distrito 10</option>
+            <option value="15">Distrito 15</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:120px">
+          <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">📅 Año de salida</label>
+          <select id="slic-anio-sel" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;color:var(--gray-900);background:white;outline:none" onchange="buscarLicencias()">
+            <option value="">— Todos —</option>
+            <option value="19">2019</option>
+            <option value="20">2020</option>
+            <option value="21">2021</option>
+            <option value="22">2022</option>
+            <option value="23">2023</option>
+            <option value="24">2024</option>
+            <option value="25">2025</option>
+            <option value="26">2026</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosRapidos()">↩ Limpiar</button>
+        </div>
+      </div>
+
+      <!-- BÚSQUEDA AVANZADA -->
+      <div class="search-grid">
+        <div class="search-input-wrap">
+          <input type="text" id="slic-nombre" placeholder="Nombre o apellido">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="slic-ni" placeholder="NI">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="slic-dni" placeholder="DNI">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="slic-jerarquia" placeholder="Jerarquía">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="slic-articulo" placeholder="Artículo">
+        </div>
+        <div class="search-input-wrap">
+          <input type="text" id="slic-ref" placeholder="Referencia">
+        </div>
+      </div>
+      <div class="search-btn-row">
+        <button class="btn btn-primary btn-sm" onclick="buscarLicencias()">🔍 Buscar</button>
+        <button class="btn btn-ghost btn-sm" onclick="limpiarBusquedaLic(); cargarTablaLicencias(licencias)">↩ Mostrar todas</button>
+        <button class="btn btn-sm" style="background:#c0392b;color:white" onclick="generarPDF('lic')">📄 Generar PDF</button>
+      </div>
+      <div id="resultCount-lic" class="result-count hidden"></div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="tablaLicencias">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Distrito</th>
+            <th>Nombre</th>
+            <th>NI</th>
+            <th>DNI</th>
+            <th>Jerarquía</th>
+            <th>Artículo</th>
+            <th>F. Salida</th>
+            <th>F. Final</th>
+            <th>D. Hábiles</th>
+            <th>D. Corridos</th>
+            <th>Fracción</th>
+            <th>Año</th>
+            <th>Ref.</th>
+          </tr>
+        </thead>
+        <tbody id="licTbody"></tbody>
+      </table>
+    </div>
+    <div id="lic-initial" class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <p>Usá los filtros de arriba para buscar licencias.</p>
+    </div>
+    <div id="lic-empty" class="empty-state hidden">
+      <div class="empty-icon">📅</div>
+      <p>No se encontraron licencias.</p>
+    </div>
+  </div>
+</div>
+
+<!-- =================== CONFIG =================== -->
+<div id="mod-config" class="content hidden">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">⚙️</span>
+      <h2>Configuración</h2>
+    </div>
+    <div class="card-body">
+      <div class="config-section">
+        <div class="config-label">🔗 URL del Apps Script (Web App)</div>
+        <input class="config-input" type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
+        <p style="font-size:11px;color:var(--gray-500);margin-top:4px">Pegá aquí la URL de tu Apps Script desplegado como Web App.</p>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="guardarConfig()">💾 Guardar URL</button>
+        <button class="btn btn-outline" onclick="probarConexion()">🧪 Probar conexión</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportarDatos()">📤 Exportar JSON local</button>
+      </div>
+      <hr style="margin:20px 0;border:none;border-top:1px solid var(--gray-200)">
+      <div class="config-label" style="margin-bottom:10px">📊 Datos almacenados localmente</div>
+      <p style="font-size:13px;color:var(--gray-600)" id="statsText">Cargando...</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">👥</span>
+      <h2>Lista de Empleados</h2>
+    </div>
+    <div class="card-body">
+      <p style="font-size:12px;color:var(--gray-600);margin-bottom:12px">Editá los nombres en el código fuente (variable <code>EMPLEADOS</code>) o actualizalos aquí temporalmente:</p>
+      <textarea id="cfg-empleados" style="width:100%;height:180px;font-size:12px;font-family:monospace;border:1.5px solid var(--gray-300);border-radius:6px;padding:8px" placeholder="Un nombre por línea..."></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="actualizarEmpleados()">✅ Actualizar lista</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== MODAL DETALLE =================== -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Detalle del registro</h3>
+      <button class="modal-close" onclick="cerrarModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div style="padding:0 20px 20px;display:flex;gap:10px">
+      <button class="btn btn-ghost btn-sm" onclick="cerrarModal()">Cerrar</button>
+      <button class="btn btn-danger btn-sm" id="btnEliminarModal">🗑️ Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ==========================================
+// LISTA DE EMPLEADOS — se construye desde Datos Personales
+// No usar lista hardcodeada para evitar mezcla con datos reales
+// ==========================================
+let EMPLEADOS = [];
+
+// ==========================================
+// ESTADO DE LA APP
+// ==========================================
+let expedientes = [];
+let elementos = [];
+let empleados = [];
+let licencias = [];
+let selectedEmpleados = [];
+let _archivosLegajo = [];
+let autocompleteIndex = -1;
+let currentModule = 'expedientes';
+let modalCurrentId = null;
+let modalCurrentType = null;
+let APPS_SCRIPT_URL = localStorage.getItem('libro_digital_url') || '';
+
+// ==========================================
+// INIT
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  setTodayDates();
+  cargarDatosLocales();
+  cargarConfig();
+  actualizarStats();
+  document.getElementById('cfg-empleados').value = EMPLEADOS.join('\n');
+
+  // Close autocomplete on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.autocomplete-wrap')) {
+      document.getElementById('empleadoList').classList.add('hidden');
+    }
+  });
+
+  // Inicializar autocomplete en campos de nombre
+  initAutocompleteCampo('ef-entregadoa', 'ef-entregadoa-list');
+  initAutocompleteCampo('el-entregaa',   'el-entregaa-list');
+  initAutocompleteCampo('emp-nombre',    'emp-nombre-list');
+  initAutocompleteCampo('lic-nombre',    'lic-nombre-list', 'autoFillLicencia');
+});
+
+function setTodayDates() {
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth()+1).padStart(2,'0');
+  const d = String(today.getDate()).padStart(2,'0');
+  const iso = `${y}-${m}-${d}`;
+  const fields = ['ef-fecha','el-fecha','el-fecha-recibido','el-fecha-entrega'];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = iso;
+  });
+}
+
+function cargarDatosLocales() {
+  expedientes = JSON.parse(localStorage.getItem('libro_exp') || '[]');
+  elementos   = JSON.parse(localStorage.getItem('libro_elem') || '[]');
+  empleados   = JSON.parse(localStorage.getItem('libro_empleados') || '[]');
+  licencias   = JSON.parse(localStorage.getItem('libro_licencias') || '[]');
+  // Construir lista de nombres solo desde Datos Personales reales
+  reconstruirListaEmpleados();
+}
+
+function reconstruirListaEmpleados() {
+  // Solo usa los nombres cargados en Datos Personales — nada inventado
+  EMPLEADOS = empleados
+    .map(e => e.nombre)
+    .filter(Boolean)
+    .map(n => n.toUpperCase().trim())
+    .filter((v, i, arr) => arr.indexOf(v) === i) // sin duplicados
+    .sort();
+  // Actualizar el textarea de Config si existe
+  const cfg = document.getElementById('cfg-empleados');
+  if (cfg) cfg.value = EMPLEADOS.join('\n');
+}
+
+function cargarConfig() {
+  const url = localStorage.getItem('libro_digital_url') || '';
+  document.getElementById('cfg-url').value = url;
+  APPS_SCRIPT_URL = url;
+}
+
+function guardarConfig() {
+  const url = document.getElementById('cfg-url').value.trim();
+  localStorage.setItem('libro_digital_url', url);
+  APPS_SCRIPT_URL = url;
+  toast('✅ URL guardada correctamente', 'success');
+}
+
+async function probarConexion() {
+  if (!APPS_SCRIPT_URL) { toast('⚠️ Primero configurá la URL', 'error'); return; }
+  setSyncStatus('syncing', '⏳ Probando...');
+  try {
+    const r = await fetch(`${APPS_SCRIPT_URL}?action=ping`);
+    const d = await r.json();
+    if (d.status === 'ok') {
+      toast('✅ Conexión exitosa con Google Sheets', 'success');
+      setSyncStatus('ok', '✅ Conectado');
+    } else {
+      toast('⚠️ Respuesta inesperada del servidor', 'error');
+      setSyncStatus('ok', '⚡ Listo');
+    }
+  } catch (e) {
+    toast('❌ No se pudo conectar. Verificá la URL.', 'error');
+    setSyncStatus('ok', '❌ Sin conexión');
+  }
+}
+
+// ==========================================
+// NAVEGACIÓN
+// ==========================================
+function switchModule(mod) {
+  ['expedientes','elementos','empleados','licencias','config'].forEach(m => {
+    document.getElementById(`mod-${m}`).classList.toggle('hidden', m !== mod);
+  });
+  document.querySelectorAll('.main-tab').forEach((t,i) => {
+    const mods = ['expedientes','elementos','empleados','licencias','config'];
+    t.classList.toggle('active', mods[i] === mod);
+  });
+  currentModule = mod;
+  if (mod === 'config') actualizarStats();
+}
+
+function switchTab(mod, tab) {
+  const prefix = mod === 'exp' ? 'exp' : mod === 'elem' ? 'elem' : mod === 'emp' ? 'emp' : 'lic';
+  const modName = mod === 'exp' ? 'expedientes' : mod === 'elem' ? 'elementos' : mod === 'emp' ? 'empleados' : 'licencias';
+  document.getElementById(`${prefix}-form`).classList.toggle('hidden', tab !== 'form');
+  document.getElementById(`${prefix}-list`).classList.toggle('hidden', tab !== 'list');
+  const tabs = document.querySelectorAll(`#mod-${modName} .section-tab`);
+  tabs.forEach((t, i) => t.classList.toggle('active', (i === 0 && tab === 'form') || (i === 1 && tab === 'list')));
+  if (tab === 'list') {
+    // Arrancar siempre vacío — el usuario debe filtrar para ver datos
+    if (mod === 'exp')  mostrarEstadoInicial('exp');
+    else if (mod === 'elem') mostrarEstadoInicial('elem');
+    else if (mod === 'emp')  mostrarEstadoInicial('emp');
+    else mostrarEstadoInicial('lic');
+  }
+}
+
+function mostrarEstadoInicial(mod) {
+  if (mod === 'exp') {
+    document.getElementById('expTbody').innerHTML = '';
+    document.getElementById('exp-empty').classList.add('hidden');
+    document.getElementById('exp-initial').classList.remove('hidden');
+  } else if (mod === 'elem') {
+    document.getElementById('elemTbody').innerHTML = '';
+    document.getElementById('elem-empty').classList.add('hidden');
+    document.getElementById('elem-initial').classList.remove('hidden');
+  } else if (mod === 'emp') {
+    document.getElementById('emp-card-grid').innerHTML = '';
+    document.getElementById('emp-empty').classList.add('hidden');
+    document.getElementById('emp-initial').classList.remove('hidden');
+  } else if (mod === 'lic') {
+    document.getElementById('licTbody').innerHTML = '';
+    document.getElementById('lic-empty').classList.add('hidden');
+    document.getElementById('lic-initial').classList.remove('hidden');
+  }
+}
+
+// ==========================================
+// AUTOCOMPLETE GENÉRICO PARA CAMPOS DE NOMBRE
+// ==========================================
+function initAutocompleteCampo(inputId, listId, onSelectCallback) {
+  const input = document.getElementById(inputId);
+  const list  = document.getElementById(listId);
+  if (!input || !list) return;
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    if (!q) { list.classList.add('hidden'); return; }
+    const filtered = EMPLEADOS.filter(e => e.toLowerCase().includes(q));
+    if (!filtered.length) { list.classList.add('hidden'); return; }
+    list.innerHTML = filtered.slice(0,8).map(e =>
+      `<li onclick="seleccionarCampo('${inputId}','${listId}','${e.replace(/'/g,"\\'")}',${onSelectCallback?`'${onSelectCallback}'`:'null'})">${e}</li>`
+    ).join('');
+    list.classList.remove('hidden');
+  });
+
+  input.addEventListener('keydown', (e) => {
+    const items = list.querySelectorAll('li');
+    let idx = [...items].findIndex(li => li.classList.contains('selected'));
+    if (e.key === 'ArrowDown') { idx = Math.min(idx+1, items.length-1); items.forEach((li,i) => li.classList.toggle('selected', i===idx)); e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { idx = Math.max(idx-1, 0); items.forEach((li,i) => li.classList.toggle('selected', i===idx)); e.preventDefault(); }
+    else if (e.key === 'Enter' && idx >= 0) { items[idx].click(); e.preventDefault(); }
+    else if (e.key === 'Escape') { list.classList.add('hidden'); }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest(`#${listId}`) && e.target !== input) list.classList.add('hidden');
+  });
+}
+
+function seleccionarCampo(inputId, listId, valor, callback) {
+  const input = document.getElementById(inputId);
+  const list  = document.getElementById(listId);
+  if (input) input.value = valor.toUpperCase();
+  if (list)  list.classList.add('hidden');
+  if (callback === 'autoFillLicencia') autoFillLicencia(valor);
+  if (callback === 'autoFillExpediente') autoFillExpediente(valor);
+}
+
+// Auto-completa campos de licencia buscando en empleados
+function autoFillLicencia(nombre) {
+  const nombreUp = nombre.toUpperCase().trim();
+  // Buscar coincidencias exactas primero, luego parciales
+  let matches = empleados.filter(e => e.nombre && e.nombre.toUpperCase() === nombreUp);
+  if (!matches.length) {
+    matches = empleados.filter(e => e.nombre && e.nombre.toUpperCase().includes(nombreUp));
+  }
+
+  if (!matches.length) {
+    toast('ℹ️ No se encontraron datos personales para ese nombre', 'info');
+    return;
+  }
+
+  if (matches.length === 1) {
+    aplicarDatosLicencia(matches[0]);
+    return;
+  }
+
+  // Más de uno — mostrar picker
+  mostrarPickerEmpleado(matches, 'licencia');
+}
+
+function aplicarDatosLicencia(emp) {
+  const set = (id, val) => { if (val) { const el = document.getElementById(id); if(el) el.value = val; } };
+  set('lic-ni',        emp.ni);
+  set('lic-dni',       emp.dni);
+  set('lic-jerarquia', emp.jerarquia);
+  if (emp.distrito) {
+    const radio = document.querySelector(`input[name="lic-distrito"][value="${emp.distrito}"]`);
+    if (radio) radio.checked = true;
+  }
+  toast(`✅ Datos cargados: ${emp.nombre}`, 'success');
+}
+
+function autoFillExpediente(nombre) {
+  const nombreUp = nombre.toUpperCase().trim();
+  let matches = empleados.filter(e => e.nombre && e.nombre.toUpperCase() === nombreUp);
+  if (!matches.length) {
+    matches = empleados.filter(e => e.nombre && e.nombre.toUpperCase().includes(nombreUp));
+  }
+  if (!matches.length) return;
+  if (matches.length === 1) {
+    aplicarDatosExpediente(matches[0]);
+    return;
+  }
+  mostrarPickerEmpleado(matches, 'expediente');
+}
+
+function aplicarDatosExpediente(emp) {
+  if (emp.distrito) {
+    const radio = document.querySelector(`input[name="ef-distrito"][value="${emp.distrito}"]`);
+    if (radio) radio.checked = true;
+  }
+  toast(`✅ Distrito cargado: Distrito ${emp.distrito} — ${emp.nombre}`, 'success');
+}
+
+function mostrarPickerEmpleado(lista, contexto) {
+  const overlay = document.getElementById('modalOverlay');
+  const title   = document.getElementById('modalTitle');
+  const body    = document.getElementById('modalBody');
+  const btnElim = document.getElementById('btnEliminarModal');
+  btnElim.style.display = 'none';
+
+  title.textContent = '👤 Seleccioná el empleado correcto';
+  body.innerHTML = `
+    <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px">
+      Se encontraron ${lista.length} personas con ese nombre. Elegí la correcta:
+    </p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${lista.map((e,i) => `
+        <button onclick="elegirEmpleadoPicker(${i},'${contexto}')"
+          style="text-align:left;padding:10px 14px;border:1.5px solid var(--gray-300);border-radius:8px;background:white;cursor:pointer;font-size:13px;font-family:var(--font);transition:background .15s"
+          onmouseover="this.style.background='var(--primary-light)'"
+          onmouseout="this.style.background='white'">
+          <strong>${e.nombre}</strong><br>
+          <span style="font-size:11px;color:var(--gray-500)">
+            NI: ${e.ni||'—'} · DNI: ${e.dni||'—'} · ${e.jerarquia||'—'} · Distrito ${e.distrito||'—'}
+          </span>
+        </button>
+      `).join('')}
+    </div>`;
+
+  // Guardar lista temporalmente
+  window._pickerLista = lista;
+
+  // Quitar botón editar si existe
+  const footer = overlay.querySelector('div[style*="padding:0 20px"]');
+  const prevEdit = footer?.querySelector('.btn-edit-emp,.btn-edit-lic');
+  if (prevEdit) prevEdit.remove();
+
+  overlay.classList.remove('hidden');
+}
+
+function elegirEmpleadoPicker(idx, contexto) {
+  const emp = window._pickerLista[idx];
+  cerrarModal();
+  document.getElementById('btnEliminarModal').style.display = '';
+  if (contexto === 'licencia')   aplicarDatosLicencia(emp);
+  if (contexto === 'expediente') aplicarDatosExpediente(emp);
+}
+
+// ==========================================
+// AUTOCOMPLETE EMPLEADOS (multi-tag - campo expediente)
+// ==========================================
+function filterEmpleados(val) {
+  const list = document.getElementById('empleadoList');
+  if (!val.trim()) { list.classList.add('hidden'); return; }
+  const q = val.toLowerCase();
+  const filtered = EMPLEADOS.filter(e => e.toLowerCase().includes(q) && !selectedEmpleados.includes(e));
+  if (!filtered.length) { list.classList.add('hidden'); return; }
+  list.innerHTML = filtered.slice(0,10).map((e,i) => `<li onclick="selectEmpleado('${e}')">${e}</li>`).join('');
+  list.classList.remove('hidden');
+  autocompleteIndex = -1;
+}
+
+function empleadoKeyDown(e) {
+  const list = document.getElementById('empleadoList');
+  const items = list.querySelectorAll('li');
+  if (e.key === 'ArrowDown') { autocompleteIndex = Math.min(autocompleteIndex+1, items.length-1); highlightAuto(items); e.preventDefault(); }
+  else if (e.key === 'ArrowUp') { autocompleteIndex = Math.max(autocompleteIndex-1, 0); highlightAuto(items); e.preventDefault(); }
+  else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (autocompleteIndex >= 0 && items[autocompleteIndex]) {
+      selectEmpleado(items[autocompleteIndex].textContent);
+    } else if (items.length === 1) {
+      selectEmpleado(items[0].textContent);
+    }
+  }
+  else if (e.key === 'Escape') { list.classList.add('hidden'); }
+}
+
+function highlightAuto(items) {
+  items.forEach((li,i) => li.classList.toggle('selected', i === autocompleteIndex));
+}
+
+function selectEmpleado(nombre) {
+  if (!selectedEmpleados.includes(nombre)) {
+    selectedEmpleados.push(nombre);
+    renderTags();
+    // Auto-completar datos del empleado desde Datos Personales
+    if (selectedEmpleados.length === 1) {
+      autoFillExpediente(nombre);
+    }
+  }
+  document.getElementById('ef-empleado-input').value = '';
+  document.getElementById('empleadoList').classList.add('hidden');
+}
+
+function removeEmpleado(nombre) {
+  selectedEmpleados = selectedEmpleados.filter(e => e !== nombre);
+  renderTags();
+}
+
+function renderTags() {
+  const container = document.getElementById('empleadosTags');
+  container.innerHTML = selectedEmpleados.map(e =>
+    `<span class="tag">${e}<span class="tag-remove" onclick="removeEmpleado('${e}')">×</span></span>`
+  ).join('');
+}
+
+// ==========================================
+// GUARDAR EXPEDIENTE
+// ==========================================
+function guardarExpediente() {
+  const fecha = document.getElementById('ef-fecha').value;
+  const expediente = document.getElementById('ef-expediente').value.trim();
+  if (!fecha) { toast('⚠️ La fecha es obligatoria', 'error'); return; }
+
+  const distritoEl = document.querySelector('input[name="ef-distrito"]:checked');
+  const arts = [...document.querySelectorAll('.ef-art:checked')].map(cb => cb.value);
+  const artExtra = document.getElementById('ef-art-extra').value.trim();
+  const artStr = [...arts, artExtra].filter(Boolean).join(', ');
+
+  const estadoEl = document.querySelector('input[name="ef-estado"]:checked');
+  const registro = {
+    id: Date.now().toString(),
+    fecha: formatearFecha(fecha),
+    fechaISO: fecha,
+    foja: val('ef-foja'),
+    expediente: val('ef-expediente'),
+    distrito: distritoEl ? distritoEl.value : '',
+    empleado: selectedEmpleados.join(' / '),
+    resoluciones: val('ef-resoluciones'),
+    radiogramas: val('ef-radiogramas'),
+    resoluciones2: val('ef-resoluciones2'),
+    ospe: val('ef-ospe'),
+    articulos: artStr,
+    logistica: val('ef-logistica'),
+    otro: val('ef-otro'),
+    referencia: val('ef-referencia'),
+    vienede: val('ef-vienede'),
+    entregadoa: val('ef-entregadoa'),
+    linkDoc: document.getElementById('ef-link-doc')?.value.trim() || '',
+    estado: estadoEl ? estadoEl.value : 'pendiente',
+    sincronizado: false
+  };
+
+  const idEdicion = document.getElementById('exp-form').dataset.editId;
+
+  if (idEdicion) {
+    const idx = expedientes.findIndex(x => x.id === idEdicion);
+    if (idx !== -1) expedientes[idx] = { ...registro, id: idEdicion };
+    delete document.getElementById('exp-form').dataset.editId;
+    const card = document.querySelector('#exp-form .card-header h2');
+    if (card) card.textContent = 'Nuevo Registro — Libro de Expedientes';
+    localStorage.setItem('libro_exp', JSON.stringify(expedientes));
+    toast('✅ Registro actualizado', 'success');
+    enviarASheets('expediente', { ...registro, id: idEdicion });
+  } else {
+    expedientes.unshift(registro);
+    localStorage.setItem('libro_exp', JSON.stringify(expedientes));
+    toast('✅ Registro guardado localmente', 'success');
+    enviarASheets('expediente', registro);
+  }
+  limpiarExpediente();
+  actualizarStats();
+}
+
+function limpiarExpediente() {
+  document.getElementById('ef-expediente').value = '';
+  document.getElementById('ef-foja').value = '';
+  document.getElementById('ef-resoluciones').value = '';
+  document.getElementById('ef-radiogramas').value = '';
+  document.getElementById('ef-resoluciones2').value = '';
+  document.getElementById('ef-ospe').value = '';
+  document.getElementById('ef-art-extra').value = '';
+  document.getElementById('ef-logistica').value = '';
+  document.getElementById('ef-otro').value = '';
+  document.getElementById('ef-referencia').value = '';
+  document.getElementById('ef-vienede').value = '';
+  document.getElementById('ef-entregadoa').value = '';
+  document.querySelectorAll('input[name="ef-distrito"]').forEach(r => r.checked = false);
+  document.querySelectorAll('.ef-art').forEach(cb => cb.checked = false);
+  selectedEmpleados = [];
+  renderTags();
+  document.getElementById('ef-empleado-input').value = '';
+  setTodayDates();
+}
+
+// ==========================================
+// GUARDAR ELEMENTO
+// ==========================================
+function guardarElemento() {
+  const elemento = document.getElementById('el-elemento').value.trim();
+  if (!elemento) { toast('⚠️ El elemento es obligatorio', 'error'); return; }
+
+  const comoEl = document.querySelector('input[name="el-como"]:checked');
+  const registro = {
+    id: Date.now().toString(),
+    fecha: formatearFecha(document.getElementById('el-fecha').value),
+    fechaISO: document.getElementById('el-fecha').value,
+    elemento: val('el-elemento'),
+    fechaRecibido: formatearFecha(document.getElementById('el-fecha-recibido').value),
+    entregaa: val('el-entregaa'),
+    fechaEntrega: formatearFecha(document.getElementById('el-fecha-entrega').value),
+    como: comoEl ? comoEl.value : '',
+    obs: val('el-obs'),
+    sincronizado: false
+  };
+
+  const idEdicionElem = document.getElementById('elem-form').dataset.editId;
+
+  if (idEdicionElem) {
+    const idx = elementos.findIndex(x => x.id === idEdicionElem);
+    if (idx !== -1) elementos[idx] = { ...registro, id: idEdicionElem };
+    delete document.getElementById('elem-form').dataset.editId;
+    const card = document.querySelector('#elem-form .card-header h2');
+    if (card) card.textContent = 'Nuevo Registro — Elementos de Entrega';
+    localStorage.setItem('libro_elem', JSON.stringify(elementos));
+    toast('✅ Elemento actualizado', 'success');
+    enviarASheets('elemento', { ...registro, id: idEdicionElem });
+  } else {
+    elementos.unshift(registro);
+    localStorage.setItem('libro_elem', JSON.stringify(elementos));
+    toast('✅ Elemento guardado', 'success');
+    enviarASheets('elemento', registro);
+  }
+  limpiarElemento();
+  actualizarStats();
+}
+
+function limpiarElemento() {
+  document.getElementById('el-elemento').value = '';
+  document.getElementById('el-entregaa').value = '';
+  document.getElementById('el-obs').value = '';
+  document.querySelectorAll('input[name="el-como"]').forEach(r => r.checked = false);
+  setTodayDates();
+}
+
+// ==========================================
+// TABLAS
+// ==========================================
+function cargarTablaExpedientes(data) {
+  const rows = data || expedientes;
+  const tbody = document.getElementById('expTbody');
+  const empty = document.getElementById('exp-empty');
+  const initial = document.getElementById('exp-initial');
+  tbody.innerHTML = '';
+  initial.classList.add('hidden');
+  if (!rows.length) { empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+
+  rows.forEach(r => {
+    const distClass = r.distrito ? `dist-${r.distrito}` : '';
+    const esFinal = r.estado === 'finalizado';
+    const rowClass = esFinal ? 'estado-finalizado' : 'estado-pendiente';
+    const badgeEstado = esFinal
+      ? `<span class="badge-finalizado">✅ Finalizado</span>`
+      : `<span class="badge-pendiente">🕐 Pendiente</span>`;
+    const toggleIcon = esFinal ? '🟢' : '🟡';
+    const toggleTitle = esFinal ? 'Marcar como pendiente' : 'Marcar como finalizado';
+    tbody.innerHTML += `<tr class="${rowClass}">
+      <td><button class="action-btn" onclick="verDetalle('exp','${r.id}')" title="Ver detalle">👁</button></td>
+      <td>
+        <button class="toggle-estado" onclick="toggleEstadoExp('${r.id}')" title="${toggleTitle}">${toggleIcon}</button>
+        ${badgeEstado}
+      </td>
+      <td>${normalizarFecha(r.fecha)||''}</td>
+      <td>${r.foja||''}</td>
+      <td title="${r.expediente||''}">${trunc(r.expediente,18)}</td>
+      <td title="${r.empleado||''}">${trunc(r.empleado,18)}</td>
+      <td><span class="badge ${distClass}">${r.distrito ? 'D'+r.distrito : ''}</span></td>
+      <td title="${r.resoluciones||''}">${trunc(r.resoluciones,12)}</td>
+      <td>${r.ospe||''}</td>
+      <td>${r.articulos||''}</td>
+      <td title="${r.vienede||''}">${trunc(r.vienede,10)}</td>
+      <td title="${r.entregadoa||''}">${trunc(r.entregadoa,10)}</td>
+      <td title="${r.referencia||''}">${trunc(r.referencia,12)}</td>
+    </tr>`;
+  });
+}
+
+function cargarTablaElementos(data) {
+  const rows = data || elementos;
+  const tbody = document.getElementById('elemTbody');
+  const empty = document.getElementById('elem-empty');
+  const initial = document.getElementById('elem-initial');
+  tbody.innerHTML = '';
+  initial.classList.add('hidden');
+  if (!rows.length) { empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+
+  rows.forEach(r => {
+    tbody.innerHTML += `<tr>
+      <td><button class="action-btn" onclick="verDetalle('elem','${r.id}')" title="Ver detalle">👁</button></td>
+      <td>${normalizarFecha(r.fecha)||''}</td>
+      <td title="${r.elemento||''}">${trunc(r.elemento,20)}</td>
+      <td>${normalizarFecha(r.fechaRecibido)||''}</td>
+      <td title="${r.entregaa||''}">${trunc(r.entregaa,15)}</td>
+      <td>${normalizarFecha(r.fechaEntrega)||''}</td>
+      <td>${r.como||''}</td>
+      <td title="${r.obs||''}">${trunc(r.obs,15)}</td>
+    </tr>`;
+  });
+}
+
+// ==========================================
+// BÚSQUEDA
+// ==========================================
+function buscarExpedientes() {
+  const mes    = document.getElementById('s-mes')?.value || '';
+  const anio   = document.getElementById('s-anio')?.value || '';
+  const estado = document.getElementById('s-estado')?.value || '';
+
+  // Campos tildados (filtro presencia)
+  const camposTildados = [...document.querySelectorAll('.filtro-campo:checked')].map(cb => cb.value);
+
+  const q = {
+    empleado:   document.getElementById('s-empleado')?.value.trim().toLowerCase() || '',
+    expediente: document.getElementById('s-expediente')?.value.trim().toLowerCase() || '',
+    resolucion: document.getElementById('s-resolucion')?.value.trim().toLowerCase() || '',
+    fecha:      document.getElementById('s-fecha')?.value.trim() || '',
+    foja:       document.getElementById('s-foja')?.value.trim() || '',
+    art:        document.getElementById('s-art')?.value.trim().toLowerCase() || '',
+    ospe:       document.getElementById('s-ospe')?.value.trim() || '',
+    distrito:   document.getElementById('s-distrito')?.value.trim() || '',
+    ref:        document.getElementById('s-ref')?.value.trim().toLowerCase() || ''
+  };
+
+  const res = expedientes.filter(r => {
+    const fechaNorm = normalizarFecha(r.fecha || '');
+    const partes = fechaNorm.split('/');
+
+    if (mes  && (partes.length < 2 || partes[1].padStart(2,'0') !== mes)) return false;
+    if (anio && (partes.length < 3 || partes[2].slice(-2) !== anio)) return false;
+    if (estado && (r.estado || 'pendiente') !== estado) return false;
+
+    // Filtro presencia: si hay campos tildados, el registro debe tener AL MENOS UNO con valor
+    if (camposTildados.length > 0) {
+      const tieneAlguno = camposTildados.some(campo => {
+        const val = String(r[campo] || '').trim();
+        return val !== '' && val !== '—';
+      });
+      if (!tieneAlguno) return false;
+    }
+
+    if (q.empleado   && !(r.empleado||'').toLowerCase().includes(q.empleado)) return false;
+    if (q.expediente && !(r.expediente||'').toLowerCase().includes(q.expediente)) return false;
+    if (q.resolucion && !(r.resoluciones||'').toLowerCase().includes(q.resolucion) && !(r.resoluciones2||'').toLowerCase().includes(q.resolucion)) return false;
+    if (q.fecha      && !(r.fecha||'').includes(q.fecha)) return false;
+    if (q.foja       && !(r.foja||'').includes(q.foja)) return false;
+    if (q.art        && !(r.articulos||'').toLowerCase().includes(q.art)) return false;
+    if (q.ospe       && !(r.ospe||'').includes(q.ospe)) return false;
+    if (q.distrito   && String(r.distrito||'').trim() !== q.distrito) return false;
+    if (q.ref        && !(r.referencia||'').toLowerCase().includes(q.ref)) return false;
+    return true;
+  });
+
+  pdfResultados.exp = res;
+  const meses = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const descMes    = mes    ? ` · ${meses[parseInt(mes)]}` : '';
+  const descAnio   = anio   ? ` · 20${anio}` : '';
+  const descEstado = estado ? ` · ${estado === 'pendiente' ? '🕐 Pendientes' : '✅ Finalizados'}` : '';
+  const descCampos = camposTildados.length > 0 ? ` · Con: ${camposTildados.join(', ')}` : '';
+  const rc = document.getElementById('resultCount-exp');
+  rc.textContent = `Se encontraron ${res.length} de ${expedientes.length} registros${descMes}${descAnio}${descEstado}${descCampos}`;
+  rc.classList.remove('hidden');
+  cargarTablaExpedientes(res);
+}
+
+function limpiarFiltrosExp() {
+  ['s-mes','s-anio','s-estado'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.selectedIndex = 0;
+  });
+  ['s-empleado','s-expediente','s-resolucion','s-fecha','s-foja','s-art','s-ospe','s-distrito','s-ref']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.querySelectorAll('.filtro-campo').forEach(cb => cb.checked = false);
+  document.getElementById('resultCount-exp').classList.add('hidden');
+}
+
+function toggleEstadoExp(id) {
+  const idx = expedientes.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  expedientes[idx].estado = expedientes[idx].estado === 'finalizado' ? 'pendiente' : 'finalizado';
+  localStorage.setItem('libro_exp', JSON.stringify(expedientes));
+  enviarASheets('expediente', expedientes[idx]);
+  // Refrescar la tabla con los mismos filtros activos
+  buscarExpedientes();
+  toast(expedientes[idx].estado === 'finalizado' ? '✅ Marcado como finalizado' : '🕐 Marcado como pendiente', 'success');
+}
+
+function buscarElementos() {
+  const q = {
+    elemento: v('se-elemento'),
+    entregaa: v('se-entregaa'),
+    fecha: v('se-fecha'),
+    como: v('se-como'),
+    obs: v('se-obs')
+  };
+
+  const res = elementos.filter(r => {
+    if (q.elemento && !r.elemento?.toLowerCase().includes(q.elemento)) return false;
+    if (q.entregaa && !r.entregaa?.toLowerCase().includes(q.entregaa)) return false;
+    if (q.fecha && !r.fecha?.includes(q.fecha)) return false;
+    if (q.como && !r.como?.toLowerCase().includes(q.como)) return false;
+    if (q.obs && !r.obs?.toLowerCase().includes(q.obs)) return false;
+    return true;
+  });
+
+  mostrarResultCount('elem', res.length, elementos.length);
+  cargarTablaElementos(res);
+}
+
+function mostrarResultCount(mod, count, total) {
+  const el = document.getElementById(`resultCount-${mod}`);
+  el.textContent = `Se encontraron ${count} de ${total} registros`;
+  el.classList.remove('hidden');
+}
+
+function limpiarBusqueda(mod) {
+  if (mod === 'exp') {
+    ['s-empleado','s-expediente','s-resolucion','s-fecha','s-foja','s-art','s-ospe','s-distrito','s-ref']
+      .forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('resultCount-exp').classList.add('hidden');
+  } else {
+    ['se-elemento','se-entregaa','se-fecha','se-como','se-obs']
+      .forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('resultCount-elem').classList.add('hidden');
+  }
+}
+
+// ==========================================
+// DETALLE MODAL
+// ==========================================
+function verDetalle(type, id) {
+  const lista = type === 'exp' ? expedientes : elementos;
+  const r = lista.find(x => x.id === id);
+  if (!r) return;
+  modalCurrentId = id;
+  modalCurrentType = type;
+
+  const overlay = document.getElementById('modalOverlay');
+  const title = document.getElementById('modalTitle');
+  const body = document.getElementById('modalBody');
+  const btnElim = document.getElementById('btnEliminarModal');
+  btnElim.style.display = '';
+  btnElim.onclick = () => eliminarRegistro(type, id);
+
+  // Limpiar botones editar previos
+  const footer = overlay.querySelector('div[style*="padding:0 20px"]');
+  footer.querySelectorAll('.btn-edit-exp,.btn-edit-elem,.btn-edit-emp,.btn-edit-lic').forEach(b => b.remove());
+
+  if (type === 'exp') {
+    const estadoBadge = r.estado === 'finalizado'
+      ? `<span class="badge-finalizado">✅ Finalizado</span>`
+      : `<span class="badge-pendiente">🕐 Pendiente</span>`;
+    title.textContent = '📁 Detalle de Expediente';
+    body.innerHTML = `<div class="detail-grid">
+      ${dItem('Fecha', normalizarFecha(r.fecha))} ${dItem('Foja', r.foja)}
+      <div class="detail-item"><label>Estado</label><p>${estadoBadge}</p></div>
+      ${dItem('Expediente', r.expediente, true)}
+      ${dItem('Empleado', r.empleado, true)}
+      ${dItem('Distrito', r.distrito ? 'Distrito ' + r.distrito : '')}
+      ${dItem('Resoluciones', r.resoluciones, true)}
+      ${dItem('Radiogramas', r.radiogramas)}
+      ${dItem('Resoluciones (2)', r.resoluciones2)}
+      ${dItem('OSPE', r.ospe)}
+      ${dItem('Artículos', r.articulos)}
+      ${dItem('Viene de', r.vienede)}
+      ${dItem('Entregado a', r.entregadoa)}
+      ${dItem('Logística', r.logistica, true)}
+      ${dItem('Otro', r.otro, true)}
+      ${dItem('Referencia', r.referencia, true)}
+    </div>`;
+
+    // Botón editar
+    const btnEdit = document.createElement('button');
+    btnEdit.className = 'btn btn-outline btn-sm btn-edit-exp';
+    btnEdit.innerHTML = '✏️ Editar';
+    btnEdit.onclick = () => editarExpediente(id);
+    footer.insertBefore(btnEdit, footer.firstChild);
+
+  } else {
+    title.textContent = '📦 Detalle de Elemento';
+    body.innerHTML = `<div class="detail-grid">
+      ${dItem('Fecha de carga', normalizarFecha(r.fecha))}
+      ${dItem('Fecha de recepción', normalizarFecha(r.fechaRecibido))}
+      ${dItem('Elemento', r.elemento, true)}
+      ${dItem('Entrega a', r.entregaa)}
+      ${dItem('Fecha de entrega', normalizarFecha(r.fechaEntrega))}
+      ${dItem('Cómo se entrega', r.como)}
+      ${dItem('Observaciones', r.obs, true)}
+    </div>`;
+
+    const btnEdit = document.createElement('button');
+    btnEdit.className = 'btn btn-outline btn-sm btn-edit-elem';
+    btnEdit.innerHTML = '✏️ Editar';
+    btnEdit.onclick = () => editarElemento(id);
+    footer.insertBefore(btnEdit, footer.firstChild);
+  }
+
+  overlay.classList.remove('hidden');
+}
+
+function editarExpediente(id) {
+  const r = expedientes.find(x => x.id === id);
+  if (!r) return;
+  cerrarModal();
+  switchModule('expedientes');
+  switchTab('exp', 'form');
+
+  // Convertir fecha dd/mm/yy o dd/mm/yyyy a yyyy-mm-dd para el input date
+  const toISO = (f) => {
+    if (!f) return '';
+    // Si ya es ISO yyyy-mm-dd
+    if (/^\d{4}-\d{2}-\d{2}/.test(f)) return f.slice(0,10);
+    const p = (normalizarFecha(f)||f).split('/');
+    if (p.length < 3) return '';
+    const yy = p[2].length === 2 ? '20'+p[2] : p[2];
+    return `${yy}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+  };
+
+  // Usar fechaISO si existe, sino convertir fecha
+  const fechaISO = r.fechaISO || toISO(r.fecha);
+  document.getElementById('ef-fecha').value = fechaISO;
+
+  document.getElementById('ef-foja').value         = r.foja || '';
+  document.getElementById('ef-expediente').value   = r.expediente || '';
+  document.getElementById('ef-resoluciones').value = r.resoluciones || '';
+  document.getElementById('ef-radiogramas').value  = r.radiogramas || '';
+  document.getElementById('ef-resoluciones2').value= r.resoluciones2 || '';
+  document.getElementById('ef-ospe').value         = r.ospe || '';
+  document.getElementById('ef-art-extra').value    = r.articulos || '';
+  document.getElementById('ef-logistica').value    = r.logistica || '';
+  document.getElementById('ef-otro').value         = r.otro || '';
+  document.getElementById('ef-referencia').value   = r.referencia || '';
+  document.getElementById('ef-vienede').value      = r.vienede || '';
+  document.getElementById('ef-entregadoa').value   = r.entregadoa || '';
+
+  // Distrito
+  if (r.distrito) {
+    const radio = document.querySelector(`input[name="ef-distrito"][value="${r.distrito}"]`);
+    if (radio) radio.checked = true;
+  }
+
+  // Estado
+  const estadoVal = r.estado || 'pendiente';
+  const radioEstado = document.querySelector(`input[name="ef-estado"][value="${estadoVal}"]`);
+  if (radioEstado) radioEstado.checked = true;
+
+  // Empleados (tags)
+  selectedEmpleados = r.empleado ? r.empleado.split(' / ').filter(Boolean) : [];
+  renderTags();
+
+  // Marcar edición
+  document.getElementById('exp-form').dataset.editId = id;
+  const card = document.querySelector('#exp-form .card-header h2');
+  if (card) card.textContent = '✏️ Editar Registro';
+  toast('ℹ️ Editando expediente — guardá para confirmar', 'info');
+  window.scrollTo(0, 0);
+}
+
+function editarElemento(id) {
+  const r = elementos.find(x => x.id === id);
+  if (!r) return;
+  cerrarModal();
+  switchModule('elementos');
+  switchTab('elem', 'form');
+
+  // Convertir fecha dd/mm/yy a yyyy-mm-dd
+  const toISO = (f) => {
+    if (!f) return '';
+    const p = f.split('/');
+    if (p.length < 3) return '';
+    const yy = p[2].length === 2 ? '20'+p[2] : p[2];
+    return `${yy}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+  };
+
+  document.getElementById('el-fecha').value = toISO(normalizarFecha(r.fecha));
+  document.getElementById('el-fecha-recibido').value = toISO(normalizarFecha(r.fechaRecibido));
+  document.getElementById('el-elemento').value = r.elemento || '';
+  document.getElementById('el-entregaa').value = r.entregaa || '';
+  document.getElementById('el-fecha-entrega').value = toISO(normalizarFecha(r.fechaEntrega));
+  document.getElementById('el-obs').value = r.obs || '';
+
+  if (r.como) {
+    const radio = document.querySelector(`input[name="el-como"][value="${r.como}"]`);
+    if (radio) radio.checked = true;
+  }
+
+  document.getElementById('elem-form').dataset.editId = id;
+  const card = document.querySelector('#elem-form .card-header h2');
+  if (card) card.textContent = '✏️ Editar Elemento';
+  toast('ℹ️ Editando elemento — guardá para confirmar', 'info');
+  window.scrollTo(0, 0);
+}
+
+function dItem(label, value, full = false) {
+  return `<div class="detail-item${full?' full':''}">
+    <label>${label}</label>
+    <p>${value || '—'}</p>
+  </div>`;
+}
+
+function cerrarModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+}
+
+function eliminarRegistro(type, id) {
+  if (type === 'emp') {
+    if (!confirm('¿Confirmás que querés eliminar este empleado?')) return;
+    empleados = empleados.filter(x => x.id !== id);
+    localStorage.setItem('libro_empleados', JSON.stringify(empleados));
+    cerrarModal(); cargarTarjetasEmpleados(); actualizarStats();
+    toast('🗑️ Empleado eliminado', 'info');
+    eliminarDeSheets('empleado', id); return;
+  }
+  if (type === 'lic') {
+    if (!confirm('¿Confirmás que querés eliminar esta licencia?')) return;
+    licencias = licencias.filter(x => x.id !== id);
+    localStorage.setItem('libro_licencias', JSON.stringify(licencias));
+    cerrarModal(); cargarTablaLicencias(); actualizarStats();
+    toast('🗑️ Licencia eliminada', 'info');
+    eliminarDeSheets('licencia', id); return;
+  }
+  if (!confirm('¿Confirmás que querés eliminar este registro?')) return;
+  if (type === 'exp') {
+    expedientes = expedientes.filter(x => x.id !== id);
+    localStorage.setItem('libro_exp', JSON.stringify(expedientes));
+    cargarTablaExpedientes();
+    eliminarDeSheets('expediente', id);
+  } else {
+    elementos = elementos.filter(x => x.id !== id);
+    localStorage.setItem('libro_elem', JSON.stringify(elementos));
+    cargarTablaElementos();
+    eliminarDeSheets('elemento', id);
+  }
+  cerrarModal(); actualizarStats();
+  toast('🗑️ Registro eliminado', 'info');
+}
+
+// ==========================================
+// SYNC CON GOOGLE SHEETS
+// ==========================================
+async function enviarASheets(tipo, registro) {
+  if (!APPS_SCRIPT_URL) return;
+  setSyncStatus('syncing', '⏳ Sincronizando...');
+  try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'save', tipo, data: registro })
+    });
+    const result = await response.json();
+    if (result.status === 'ok') {
+      // Marcar como sincronizado en local
+      const mapStore = { expediente: ['libro_exp', expedientes], elemento: ['libro_elem', elementos], empleado: ['libro_empleados', empleados], licencia: ['libro_licencias', licencias] };
+      const [key, arr] = mapStore[tipo] || [];
+      if (key) {
+        const idx = arr.findIndex(x => x.id === registro.id);
+        if (idx !== -1) { arr[idx].sincronizado = true; localStorage.setItem(key, JSON.stringify(arr)); }
+      }
+      setSyncStatus('ok', '✅ Sincronizado');
+    }
+  } catch (e) {
+    setSyncStatus('ok', '⚡ Local OK');
+    toast('⚠️ Guardado local. Sin conexión a Sheets.', 'info');
+  }
+}
+
+async function eliminarDeSheets(tipo, id) {
+  if (!APPS_SCRIPT_URL) return;
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'delete', tipo, id })
+    });
+  } catch (e) {}
+}
+
+async function sincronizarDesdeSheets() {
+  if (!APPS_SCRIPT_URL) { toast('⚠️ Configurá la URL de Sheets primero', 'error'); return; }
+  setSyncStatus('syncing', '⏳ Descargando...');
+  try {
+    const r = await fetch(`${APPS_SCRIPT_URL}?action=getAll`);
+    const data = await r.json();
+    if (data.expedientes)  { expedientes = data.expedientes;  localStorage.setItem('libro_exp',       JSON.stringify(expedientes)); }
+    if (data.elementos)    { elementos   = data.elementos;    localStorage.setItem('libro_elem',      JSON.stringify(elementos)); }
+    if (data.empleados)    { empleados   = data.empleados;    localStorage.setItem('libro_empleados', JSON.stringify(empleados)); reconstruirListaEmpleados(); }
+    if (data.licencias)    { licencias   = data.licencias;    localStorage.setItem('libro_licencias', JSON.stringify(licencias)); }
+    // Refrescar tablas visibles según módulo activo
+    if (currentModule === 'expedientes') cargarTablaExpedientes();
+    if (currentModule === 'elementos')   cargarTablaElementos();
+    if (currentModule === 'empleados')   cargarTarjetasEmpleados();
+    if (currentModule === 'licencias')   cargarTablaLicencias();
+    actualizarStats();
+    setSyncStatus('ok', '✅ Actualizado');
+    toast(`✅ Sincronizado — Exp: ${expedientes.length} | Elem: ${elementos.length} | Personal: ${empleados.length} | Lic: ${licencias.length}`, 'success');
+  } catch (e) {
+    setSyncStatus('ok', '❌ Error sync');
+    toast('❌ No se pudo sincronizar con Sheets', 'error');
+  }
+}
+
+async function manualSync() {
+  if (!APPS_SCRIPT_URL) { switchModule('config'); return; }
+  await sincronizarDesdeSheets();
+}
+
+// ==========================================
+// EXPORTAR
+// ==========================================
+function exportarDatos() {
+  const datos = { expedientes, elementos, empleados, licencias, exportado: new Date().toLocaleString('es-AR') };
+  const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `libro_digital_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast('📤 Datos exportados', 'success');
+}
+
+// ==========================================
+// CONFIG — EMPLEADOS
+// ==========================================
+function actualizarEmpleados() {
+  const val = document.getElementById('cfg-empleados').value.trim();
+  if (val) {
+    // Guardar lo que escribió el usuario en el textarea
+    EMPLEADOS = val.split('\n').map(s => s.trim().toUpperCase()).filter(Boolean);
+    // Eliminar duplicados y ordenar
+    EMPLEADOS = [...new Set(EMPLEADOS)].sort();
+    // Guardar en localStorage para que persista
+    localStorage.setItem('libro_empleados_lista', JSON.stringify(EMPLEADOS));
+    document.getElementById('cfg-empleados').value = EMPLEADOS.join('\n');
+    toast(`✅ Lista guardada: ${EMPLEADOS.length} empleados`, 'success');
+  }
+}
+
+function reconstruirListaEmpleados() {
+  // Construir desde Datos Personales reales + lista guardada manualmente
+  const nombresDP = empleados
+    .map(e => e.nombre)
+    .filter(Boolean)
+    .map(n => n.toUpperCase().trim());
+
+  const listaGuardada = localStorage.getItem('libro_empleados_lista');
+  let listaMerged = listaGuardada ? JSON.parse(listaGuardada) : [];
+
+  // Agregar nombres de Datos Personales que no estén
+  nombresDP.forEach(n => { if (n && !listaMerged.includes(n)) listaMerged.push(n); });
+  EMPLEADOS = [...new Set(listaMerged)].sort();
+
+  // Actualizar textarea
+  const cfg = document.getElementById('cfg-empleados');
+  if (cfg) cfg.value = EMPLEADOS.join('\n');
+
+  // Guardar en localStorage
+  localStorage.setItem('libro_empleados_lista', JSON.stringify(EMPLEADOS));
+}
+
+// ==========================================
+// STATS
+// ==========================================
+function actualizarStats() {
+  const el = document.getElementById('statsText');
+  if (!el) return;
+  el.textContent = `📁 Expedientes: ${expedientes.length}  |  📦 Elementos: ${elementos.length}  |  👤 Empleados: ${empleados.length}  |  📅 Licencias: ${licencias.length}  |  🔗 URL: ${APPS_SCRIPT_URL ? 'Configurada' : 'No configurada'}`;
+}
+
+// ==========================================
+// UTILS
+// ==========================================
+function formatearFecha(iso) {
+  if (!iso) return '';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+// Normaliza cualquier formato de fecha a dd/mm/aa
+function normalizarFecha(val) {
+  if (!val || val === '*') return '';
+  const str = String(val).trim();
+  if (!str || str === 'undefined' || str === 'null') return '';
+
+  // Extraer todos los números del formato con barras
+  // Maneja: dd/mm/yy, dd/mm/yyyy, undefined/undefined/dd/mm/yy, etc.
+  const partes = str.split('/').map(p => p.trim()).filter(p => /^\d+$/.test(p));
+  if (partes.length >= 3) {
+    // Tomar los últimos 3 números que sean fechas válidas
+    const nums = partes.slice(-3);
+    const d = nums[0].padStart(2,'0');
+    const m = nums[1].padStart(2,'0');
+    const y = nums[2].length === 4 ? nums[2].slice(2) : nums[2];
+    // Validar que parezcan fecha real
+    if (parseInt(d) <= 31 && parseInt(m) <= 12) {
+      return `${d}/${m}/${y}`;
+    }
+  }
+
+  // Formato ISO yyyy-mm-dd
+  const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoMatch) {
+    return `${isoMatch[3]}/${isoMatch[2]}/${isoMatch[1].slice(2)}`;
+  }
+
+  const meses = {Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',
+                 Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+
+  // Formato con día de semana: "Sat Jan 01 2022 00:00:00 GMT..."
+  const m1 = str.match(/(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{4})/);
+  if (m1) {
+    return `${m1[2].padStart(2,'0')}/${meses[m1[1]]||'01'}/${m1[3].slice(2)}`;
+  }
+
+  // Formato sin día de semana: "Jan 01 2022"
+  const m2 = str.match(/([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{4})/);
+  if (m2) {
+    return `${m2[2].padStart(2,'0')}/${meses[m2[1]]||'01'}/${m2[3].slice(2)}`;
+  }
+
+  // Número serial Excel
+  const num = parseFloat(str);
+  if (!isNaN(num) && num > 40000 && num < 60000) {
+    const d2 = new Date(Math.round((num - 25569) * 86400 * 1000));
+    return `${String(d2.getUTCDate()).padStart(2,'0')}/${String(d2.getUTCMonth()+1).padStart(2,'0')}/${String(d2.getUTCFullYear()).slice(2)}`;
+  }
+
+  return str;
+}
+
+function trunc(str, n) {
+  if (!str) return '';
+  return str.length > n ? str.substring(0,n)+'…' : str;
+}
+
+function v(id) {
+  const el = document.getElementById(id);
+  if (!el) return '';
+  // Obtener valor real (no el visual del CSS), convertir a minúsculas para comparar
+  return el.value.trim().toLowerCase();
+}
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim().toUpperCase() : '';
+}
+
+function setSyncStatus(state, text) {
+  const el = document.getElementById('syncStatus');
+  el.textContent = text;
+  el.classList.toggle('syncing', state === 'syncing');
+}
+
+function toast(msg, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  container.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.4s'; setTimeout(() => t.remove(), 400); }, 3000);
+}
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) cerrarModal();
+});
+
+// ==========================================
+// EMPLEADOS — EDAD PREVIEW
+// ==========================================
+function mostrarEdadPreview() {
+  const val = document.getElementById('emp-nacimiento').value;
+  const preview = document.getElementById('emp-edad-preview');
+  if (!val) { preview.innerHTML = ''; return; }
+  const edad = calcularEdad(val);
+  const proxCumple = proximoCumple(val);
+  preview.innerHTML = `<div class="age-display">🎂 ${edad} años</div>
+    <div style="font-size:11px;color:var(--gray-500);margin-top:4px">${proxCumple}</div>`;
+}
+
+function parsearFecha(val) {
+  if (!val) return null;
+  const str = normalizarFecha(String(val));
+  if (!str) return null;
+  const p = str.split('/');
+  if (p.length < 3) return null;
+  const yy = p[2].length === 2 ? '20'+p[2] : p[2];
+  const d = new Date(parseInt(yy), parseInt(p[1])-1, parseInt(p[0]));
+  return isNaN(d) ? null : d;
+}
+
+function calcularEdad(nacISO) {
+  if (!nacISO) return 0;
+  const nac = parsearFecha(nacISO) || new Date(nacISO);
+  if (!nac || isNaN(nac)) return 0;
+  const hoy = new Date();
+  let edad = hoy.getFullYear() - nac.getFullYear();
+  const m = hoy.getMonth() - nac.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+  return edad;
+}
+
+function proximoCumple(nacISO) {
+  if (!nacISO) return '';
+  const nac = parsearFecha(nacISO) || new Date(nacISO);
+  if (!nac || isNaN(nac)) return '';
+  const hoy = new Date();
+  let proxAnio = new Date(hoy.getFullYear(), nac.getMonth(), nac.getDate());
+  if (proxAnio < hoy) proxAnio.setFullYear(hoy.getFullYear() + 1);
+  const diff = Math.ceil((proxAnio - hoy) / (1000*60*60*24));
+  if (diff === 0) return '🎉 ¡Hoy cumple años!';
+  if (diff === 1) return '🎂 Mañana cumple años';
+  return `Próximo cumpleaños en ${diff} días (${proxAnio.toLocaleDateString('es-AR')})`;
+}
+
+function esCumpleaniosHoy(nacISO) {
+  if (!nacISO) return false;
+  const nac = parsearFecha(nacISO) || new Date(nacISO);
+  if (!nac || isNaN(nac)) return false;
+  const hoy = new Date();
+  return hoy.getMonth() === nac.getMonth() && hoy.getDate() === nac.getDate();
+}
+
+// ==========================================
+// EMPLEADOS — GUARDAR
+// ==========================================
+function guardarEmpleado() {
+  const nombre = document.getElementById('emp-nombre').value.trim();
+  if (!nombre) { toast('⚠️ El nombre es obligatorio', 'error'); return; }
+
+  const distritoEl = document.querySelector('input[name="emp-distrito"]:checked');
+
+  // Buscar si ya existe (edición)
+  const idEdicion = document.getElementById('emp-form').dataset.editId;
+
+  const registro = {
+    id: idEdicion || Date.now().toString(),
+    nombre: val('emp-nombre'),
+    dni: val('emp-dni'),
+    ni: val('emp-ni'),
+    cuil: val('emp-cuil'),
+    email: document.getElementById('emp-email')?.value.trim() || '',
+    jerarquia: val('emp-jerarquia'),
+    distrito: distritoEl ? distritoEl.value : '',
+    nacimiento: document.getElementById('emp-nacimiento').value,
+    cumple: document.getElementById('emp-cumple').value,
+    telefono: val('emp-telefono'),
+    sangre: document.getElementById('emp-sangre').value,
+    direccion: val('emp-direccion'),
+    comisaria: val('emp-comisaria'),
+    arma: {
+      marca:           val('arma-marca'),
+      modelo:          val('arma-modelo'),
+      serie:           val('arma-serie'),
+      cargadores:      val('arma-cargadores'),
+      municiones:      val('arma-municiones'),
+      remarque:        val('arma-remarque'),
+      fechaAsignacion: document.getElementById('arma-fecha-asignacion').value || ''
+    },
+    chaleco: {
+      marca: val('chaleco-marca'),
+      modelo: val('chaleco-modelo'),
+      serie: val('chaleco-serie'),
+      nivel: document.getElementById('chaleco-nivel').value,
+      talle: document.getElementById('chaleco-talle').value,
+      lote: val('chaleco-lote'),
+      fabricacion: document.getElementById('chaleco-fabricacion').value,
+      vencimiento: document.getElementById('chaleco-vencimiento').value
+    }
+  };
+
+  if (idEdicion) {
+    const idx = empleados.findIndex(e => e.id === idEdicion);
+    if (idx !== -1) empleados[idx] = registro;
+    delete document.getElementById('emp-form').dataset.editId;
+    toast('✅ Empleado actualizado', 'success');
+  } else {
+    empleados.unshift(registro);
+    toast('✅ Empleado guardado', 'success');
+  }
+
+  localStorage.setItem('libro_empleados', JSON.stringify(empleados));
+  limpiarEmpleado();
+  actualizarStats();
+  sincronizarListaEmpleados();
+  enviarASheets('empleado', registro);
+}
+
+function sincronizarListaEmpleados() {
+  reconstruirListaEmpleados();
+}
+
+function limpiarEmpleado() {
+  ['emp-nombre','emp-dni','emp-ni','emp-cuil','emp-email','emp-jerarquia','emp-telefono','emp-direccion','emp-comisaria',
+   'arma-marca','arma-modelo','arma-serie','arma-cargadores','arma-municiones','arma-remarque',
+   'chaleco-marca','chaleco-modelo','chaleco-serie','chaleco-nivel','chaleco-lote']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  ['emp-nacimiento','emp-cumple','chaleco-fabricacion','chaleco-vencimiento','arma-fecha-asignacion']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  ['emp-sangre','chaleco-talle']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.selectedIndex = 0; });
+  document.querySelectorAll('input[name="emp-distrito"]').forEach(r => r.checked = false);
+  document.getElementById('emp-edad-preview').innerHTML = '';
+  delete document.getElementById('emp-form').dataset.editId;
+  const card = document.querySelector('#emp-form .card-header h2');
+  if (card) card.textContent = 'Datos del Empleado';
+}
+
+// ==========================================
+// EMPLEADOS — TARJETAS
+// ==========================================
+function cargarTarjetasEmpleados(data) {
+  const lista = data || empleados;
+  const grid = document.getElementById('emp-card-grid');
+  const empty = document.getElementById('emp-empty');
+  const initial = document.getElementById('emp-initial');
+  grid.innerHTML = '';
+  initial.classList.add('hidden');
+
+  if (!lista.length) {
+    empty.classList.remove('hidden');
+    grid.classList.add('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  grid.classList.remove('hidden');
+
+  lista.forEach(emp => {
+    const edad = emp.nacimiento ? calcularEdad(emp.nacimiento) : null;
+    const esCumple = emp.nacimiento ? esCumpleaniosHoy(emp.nacimiento) : false;
+    const iniciales = emp.nombre.split(' ').filter(Boolean).map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    const distClass = emp.distrito ? `dist-${emp.distrito}` : '';
+
+    // Chaleco vencido o por vencer?
+    let chalecoAlert = '';
+    if (emp.chaleco?.vencimiento) {
+      const fechaNorm = normalizarFecha(emp.chaleco.vencimiento);
+      let venc = null;
+      if (fechaNorm) {
+        const p = fechaNorm.split('/');
+        if (p.length === 3) {
+          const yy = p[2].length === 2 ? '20'+p[2] : p[2];
+          venc = new Date(parseInt(yy), parseInt(p[1])-1, parseInt(p[0]));
+        }
+      }
+      if (venc && !isNaN(venc)) {
+        const hoy = new Date();
+        const diff = Math.ceil((venc - hoy) / (1000*60*60*24));
+        if (diff < 0) chalecoAlert = `<span style="color:#c0392b;font-size:11px;font-weight:700">⚠️ Chaleco VENCIDO</span>`;
+        else if (diff <= 90) chalecoAlert = `<span style="color:#e67e22;font-size:11px;font-weight:700">⚠️ Chaleco vence en ${diff} días</span>`;
+      }
+    }
+
+    grid.innerHTML += `
+    <div class="emp-card" onclick="verDetalleEmpleado('${emp.id}')">
+      <div class="emp-card-header">
+        <div class="emp-avatar">${iniciales||'👤'}</div>
+        <div>
+          <div class="emp-card-name">${emp.nombre}</div>
+          <div class="emp-card-sub">${emp.jerarquia||'—'}${emp.distrito ? ' · Distrito '+emp.distrito : ''}</div>
+        </div>
+      </div>
+      <div class="emp-card-body">
+        <div class="emp-info-row">
+          <span class="emp-info-label">DNI</span>
+          <span>${emp.dni||'—'}</span>
+        </div>
+        <div class="emp-info-row">
+          <span class="emp-info-label">NI</span>
+          <span>${emp.ni||'—'}</span>
+        </div>
+        <div class="emp-info-row">
+          <span class="emp-info-label">Edad</span>
+          <span>${edad !== null ? edad + ' años' : '—'}${esCumple ? ' <span class="emp-birthday-badge">🎂 ¡Hoy!</span>' : ''}</span>
+        </div>
+        <div class="emp-info-row">
+          <span class="emp-info-label">Tel.</span>
+          <span>${emp.telefono||'—'}</span>
+        </div>
+        <div class="emp-info-row">
+          <span class="emp-info-label">Sangre</span>
+          <span>${emp.sangre ? '<strong>'+emp.sangre+'</strong>' : '—'}</span>
+        </div>
+        ${emp.arma?.serie ? `<div class="emp-info-row"><span class="emp-info-label">Arma</span><span>${emp.arma.marca||''} ${emp.arma.modelo||''} · S/N ${emp.arma.serie}</span></div>` : ''}
+        ${chalecoAlert ? `<div style="padding:6px 0">${chalecoAlert}</div>` : ''}
+      </div>
+    </div>`;
+  });
+}
+
+// ==========================================
+// EMPLEADOS — BÚSQUEDA
+// ==========================================
+function buscarEmpleados() {
+  const q = {
+    nombre: v('semp-nombre'),
+    dni: v('semp-dni'),
+    ni: v('semp-ni'),
+    jerarquia: v('semp-jerarquia'),
+    distrito: v('semp-distrito'),
+    arma: v('semp-arma')
+  };
+  const res = empleados.filter(e => {
+    if (q.nombre && !e.nombre?.toLowerCase().includes(q.nombre)) return false;
+    if (q.dni && !e.dni?.includes(q.dni)) return false;
+    if (q.ni && !e.ni?.includes(q.ni)) return false;
+    if (q.jerarquia && !e.jerarquia?.toLowerCase().includes(q.jerarquia)) return false;
+    if (q.distrito && String(e.distrito||'').trim() !== q.distrito) return false;
+    if (q.arma && !e.arma?.serie?.toLowerCase().includes(q.arma)) return false;
+    return true;
+  });
+  const rc = document.getElementById('resultCount-emp');
+  rc.textContent = `Se encontraron ${res.length} de ${empleados.length} empleados`;
+  rc.classList.remove('hidden');
+  cargarTarjetasEmpleados(res);
+}
+
+function limpiarBusquedaEmp() {
+  ['semp-nombre','semp-dni','semp-ni','semp-jerarquia','semp-distrito','semp-arma']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('resultCount-emp').classList.add('hidden');
+}
+
+// ==========================================
+// EMPLEADOS — DETALLE MODAL
+// ==========================================
+function verDetalleEmpleado(id) {
+  const emp = empleados.find(e => e.id === id);
+  if (!emp) return;
+  modalCurrentId = id;
+  modalCurrentType = 'emp';
+
+  const overlay = document.getElementById('modalOverlay');
+  const title = document.getElementById('modalTitle');
+  const body = document.getElementById('modalBody');
+  const btnElim = document.getElementById('btnEliminarModal');
+  btnElim.onclick = () => eliminarRegistro('emp', id);
+
+  const edad = emp.nacimiento ? calcularEdad(emp.nacimiento) : null;
+  const proxCumple = emp.nacimiento ? proximoCumple(emp.nacimiento) : '';
+  const esCumple = emp.nacimiento ? esCumpleaniosHoy(emp.nacimiento) : false;
+
+  let chalecoVencInfo = '';
+  if (emp.chaleco?.vencimiento) {
+    const venc = new Date(emp.chaleco.vencimiento);
+    const hoy = new Date();
+    const diff = Math.ceil((venc - hoy) / (1000*60*60*24));
+    if (diff < 0) chalecoVencInfo = `<span style="background:#fdecea;color:#c0392b;padding:2px 8px;border-radius:4px;font-weight:700">⚠️ VENCIDO hace ${Math.abs(diff)} días</span>`;
+    else if (diff <= 90) chalecoVencInfo = `<span style="background:#fef5e7;color:#e67e22;padding:2px 8px;border-radius:4px;font-weight:700">⚠️ Vence en ${diff} días</span>`;
+    else chalecoVencInfo = `<span style="color:var(--accent);font-weight:600">✅ Vigente (${diff} días restantes)</span>`;
+  }
+
+  title.textContent = `👮 ${emp.nombre}`;
+
+  body.innerHTML = `
+  <div class="modal-tabs">
+    <button class="modal-tab active" onclick="switchModalTab(0)">👤 Personal</button>
+    <button class="modal-tab" onclick="switchModalTab(1)">🔫 Arma</button>
+    <button class="modal-tab" onclick="switchModalTab(2)">🦺 Chaleco</button>
+  </div>
+
+  <!-- TAB 0: PERSONAL -->
+  <div class="modal-tab-content active" style="padding:16px">
+    <div class="detail-grid">
+      ${dItem('DNI', emp.dni)} ${dItem('NI', emp.ni)}
+      ${dItem('CUIL', emp.cuil)} ${dItem('Email', emp.email)}
+      ${dItem('Jerarquía', emp.jerarquia)} ${dItem('Distrito', emp.distrito ? 'Distrito '+emp.distrito : '')}
+      ${dItem('Fecha de Nacimiento', emp.nacimiento ? formatearFecha(emp.nacimiento) : '')}
+      ${dItem('Edad', edad !== null ? (edad+' años'+(esCumple?' 🎂 ¡Hoy cumple!':'')) : '')}
+      ${dItem('Próximo cumpleaños', proxCumple, true)}
+      ${dItem('Teléfono', emp.telefono)} ${dItem('Grupo sanguíneo', emp.sangre)}
+      ${dItem('Dirección personal', emp.direccion, true)}
+      ${dItem('Comisaría / Jurisdicción', emp.comisaria, true)}
+    </div>
+  </div>
+
+  <!-- TAB 1: ARMA -->
+  <div class="modal-tab-content" style="padding:16px">
+    ${emp.arma?.serie || emp.arma?.marca ? `
+    <div class="detail-grid">
+      ${dItem('Marca', emp.arma?.marca)} ${dItem('Modelo', emp.arma?.modelo)}
+      ${dItem('N° de Serie', emp.arma?.serie)} ${dItem('Cargadores', emp.arma?.cargadores)}
+      ${dItem('Municiones', emp.arma?.municiones)}
+      ${dItem('Remarque', emp.arma?.remarque, true)}
+      ${dItem('Fecha de Asignación', emp.arma?.fechaAsignacion ? normalizarFecha(emp.arma.fechaAsignacion) : '')}
+    </div>` : '<p style="color:var(--gray-500);font-size:13px;padding:8px">Sin datos de arma cargados.</p>'}
+  </div>
+
+  <!-- TAB 2: CHALECO -->
+  <div class="modal-tab-content" style="padding:16px">
+    ${emp.chaleco?.serie || emp.chaleco?.marca ? `
+    <div class="detail-grid">
+      ${dItem('Marca', emp.chaleco?.marca)} ${dItem('Modelo', emp.chaleco?.modelo)}
+      ${dItem('N° de Serie', emp.chaleco?.serie)} ${dItem('Nivel', emp.chaleco?.nivel)}
+      ${dItem('Talle', emp.chaleco?.talle)} ${dItem('Lote', emp.chaleco?.lote)}
+      ${dItem('Fecha Fabricación', normalizarFecha(emp.chaleco?.fabricacion||''))}
+      ${dItem('Fecha Vencimiento', normalizarFecha(emp.chaleco?.vencimiento||''))}
+      <div class="detail-item full"><label>Estado</label><p>${chalecoVencInfo||'—'}</p></div>
+    </div>` : '<p style="color:var(--gray-500);font-size:13px;padding:8px">Sin datos de chaleco cargados.</p>'}
+  </div>`;
+
+  // Agregar botón editar
+  const footer = overlay.querySelector('div[style*="padding:0 20px"]');
+  // Eliminar btn editar previo si existe
+  const prevEdit = footer.querySelector('.btn-edit-emp');
+  if (prevEdit) prevEdit.remove();
+  const btnEdit = document.createElement('button');
+  btnEdit.className = 'btn btn-outline btn-sm btn-edit-emp';
+  btnEdit.innerHTML = '✏️ Editar';
+  btnEdit.onclick = () => editarEmpleado(id);
+  footer.insertBefore(btnEdit, footer.firstChild);
+
+  overlay.classList.remove('hidden');
+}
+
+function switchModalTab(idx) {
+  document.querySelectorAll('.modal-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.modal-tab-content').forEach((c,i) => c.classList.toggle('active', i===idx));
+}
+
+function editarEmpleado(id) {
+  const emp = empleados.find(e => e.id === id);
+  if (!emp) return;
+  cerrarModal();
+  switchModule('empleados');
+  switchTab('emp','form');
+
+  // Rellenar formulario
+  document.getElementById('emp-nombre').value = emp.nombre||'';
+  document.getElementById('emp-dni').value = emp.dni||'';
+  document.getElementById('emp-ni').value = emp.ni||'';
+  document.getElementById('emp-cuil').value = emp.cuil||'';
+  const empEmailEl = document.getElementById('emp-email');
+  if (empEmailEl) empEmailEl.value = emp.email||'';
+  document.getElementById('emp-jerarquia').value = emp.jerarquia||'';
+  document.getElementById('emp-nacimiento').value = emp.nacimiento||'';
+  document.getElementById('emp-cumple').value = emp.cumple||'';
+  document.getElementById('emp-telefono').value = emp.telefono||'';
+  document.getElementById('emp-sangre').value = emp.sangre||'';
+  document.getElementById('emp-direccion').value = emp.direccion||'';
+  document.getElementById('emp-comisaria').value = emp.comisaria||'';
+  if (emp.distrito) {
+    const radio = document.querySelector(`input[name="emp-distrito"][value="${emp.distrito}"]`);
+    if (radio) radio.checked = true;
+  }
+  mostrarEdadPreview();
+
+  // Arma
+  if (emp.arma) {
+    document.getElementById('arma-marca').value    = emp.arma.marca||'';
+    document.getElementById('arma-modelo').value   = emp.arma.modelo||'';
+    document.getElementById('arma-serie').value    = emp.arma.serie||'';
+    document.getElementById('arma-cargadores').value = emp.arma.cargadores||'';
+    document.getElementById('arma-municiones').value = emp.arma.municiones||'';
+    document.getElementById('arma-remarque').value = emp.arma.remarque||'';
+    document.getElementById('arma-fecha-asignacion').value = emp.arma.fechaAsignacion||'';
+  }
+  // Chaleco
+  if (emp.chaleco) {
+    document.getElementById('chaleco-marca').value = emp.chaleco.marca||'';
+    document.getElementById('chaleco-modelo').value = emp.chaleco.modelo||'';
+    document.getElementById('chaleco-serie').value = emp.chaleco.serie||'';
+    document.getElementById('chaleco-nivel').value = emp.chaleco.nivel||'';
+    document.getElementById('chaleco-talle').value = emp.chaleco.talle||'';
+    document.getElementById('chaleco-lote').value = emp.chaleco.lote||'';
+    document.getElementById('chaleco-fabricacion').value = emp.chaleco.fabricacion||'';
+    document.getElementById('chaleco-vencimiento').value = emp.chaleco.vencimiento||'';
+  }
+
+  // Marcar como edición
+  document.getElementById('emp-form').dataset.editId = id;
+  const card = document.querySelector('#emp-form .card-header h2');
+  if (card) card.textContent = '✏️ Editar Empleado';
+  toast('ℹ️ Editando empleado — guardá para confirmar cambios', 'info');
+}
+
+// ==========================================
+// LICENCIAS — CALCULAR DÍAS CORRIDOS
+// ==========================================
+function calcularDias() {
+  const salida = document.getElementById('lic-fecha-salida').value;
+  const final  = document.getElementById('lic-fecha-final').value;
+  if (!salida || !final) return;
+  const d1 = new Date(salida);
+  const d2 = new Date(final);
+  if (d2 < d1) return;
+  const corridos = Math.round((d2 - d1) / (1000*60*60*24)) + 1;
+  document.getElementById('lic-dias-corridos').value = corridos;
+}
+
+// ==========================================
+// LICENCIAS — GUARDAR
+// ==========================================
+function guardarLicencia() {
+  const ni  = val('lic-ni');
+  const dni = val('lic-dni');
+  const nombre = val('lic-nombre');
+  if (!ni && !dni && !nombre) { toast('⚠️ Completá al menos Nombre, NI o DNI', 'error'); return; }
+
+  const distritoEl = document.querySelector('input[name="lic-distrito"]:checked');
+  const fraccionEl = document.querySelector('input[name="lic-fraccion"]:checked');
+  const idEdicion  = document.getElementById('lic-form').dataset.editId;
+
+  const registro = {
+    id:            idEdicion || Date.now().toString(),
+    distrito:      distritoEl ? distritoEl.value : '',
+    nombre,
+    ni:            val('lic-ni'),
+    dni:           val('lic-dni'),
+    jerarquia:     val('lic-jerarquia'),
+    articulo:      val('lic-articulo'),
+    fechaSalida:   formatearFecha(document.getElementById('lic-fecha-salida').value),
+    fechaSalidaISO:document.getElementById('lic-fecha-salida').value,
+    fechaFinal:    formatearFecha(document.getElementById('lic-fecha-final').value),
+    diasHabiles:   document.getElementById('lic-dias-habiles').value.trim(),
+    diasCorridos:  document.getElementById('lic-dias-corridos').value.trim(),
+    fraccion:      fraccionEl ? fraccionEl.value : '',
+    anio:          document.getElementById('lic-anio').value.trim(),
+    referencia:    val('lic-referencia')
+  };
+
+  if (idEdicion) {
+    const idx = licencias.findIndex(x => x.id === idEdicion);
+    if (idx !== -1) licencias[idx] = registro;
+    delete document.getElementById('lic-form').dataset.editId;
+    const card = document.querySelector('#lic-form .card-header h2');
+    if (card) card.textContent = 'Nueva Licencia del Personal';
+    toast('✅ Licencia actualizada', 'success');
+  } else {
+    licencias.unshift(registro);
+    toast('✅ Licencia guardada', 'success');
+  }
+
+  localStorage.setItem('libro_licencias', JSON.stringify(licencias));
+  limpiarLicencia();
+  actualizarStats();
+  enviarASheets('licencia', registro);
+}
+
+function limpiarLicencia() {
+  ['lic-nombre','lic-ni','lic-dni','lic-jerarquia','lic-articulo','lic-dias-habiles','lic-anio','lic-referencia']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  ['lic-fecha-salida','lic-fecha-final'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  document.getElementById('lic-dias-corridos').value = '';
+  document.querySelectorAll('input[name="lic-distrito"]').forEach(r => r.checked = false);
+  document.querySelectorAll('input[name="lic-fraccion"]').forEach(r => r.checked = false);
+}
+
+// ==========================================
+// LICENCIAS — TABLA
+// ==========================================
+function cargarTablaLicencias(data) {
+  const rows  = data || licencias;
+  const tbody = document.getElementById('licTbody');
+  const empty = document.getElementById('lic-empty');
+  const initial = document.getElementById('lic-initial');
+  tbody.innerHTML = '';
+  initial.classList.add('hidden');
+  if (!rows.length) { empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+
+  rows.forEach(r => {
+    const distClass = r.distrito ? `dist-${r.distrito}` : '';
+    const fSalida = normalizarFecha(r.fechaSalida);
+    const fFinal  = normalizarFecha(r.fechaFinal);
+    tbody.innerHTML += `<tr>
+      <td><button class="action-btn" onclick="verDetalleLicencia('${r.id}')" title="Ver detalle">👁</button></td>
+      <td><span class="badge ${distClass}">${r.distrito ? 'D'+r.distrito : '—'}</span></td>
+      <td title="${r.nombre||''}">${trunc(r.nombre,16)}</td>
+      <td>${r.ni||'—'}</td>
+      <td>${r.dni||'—'}</td>
+      <td>${trunc(r.jerarquia,12)}</td>
+      <td>${trunc(r.articulo,14)}</td>
+      <td>${fSalida||'—'}</td>
+      <td>${fFinal||'—'}</td>
+      <td style="text-align:center">${r.diasHabiles||'—'}</td>
+      <td style="text-align:center">${r.diasCorridos||'—'}</td>
+      <td>${trunc(r.fraccion,12)}</td>
+      <td style="text-align:center">${r.anio||'—'}</td>
+      <td title="${r.referencia||''}">${trunc(r.referencia,14)}</td>
+    </tr>`;
+  });
+}
+
+// ==========================================
+// LICENCIAS — BÚSQUEDA
+// ==========================================
+function buscarLicencias() {
+  const getNombre = () => {
+    const el = document.getElementById('slic-nombre');
+    return el ? el.value.trim().toLowerCase() : '';
+  };
+  const mes      = document.getElementById('slic-mes')?.value || '';
+  const distrSel = document.getElementById('slic-distrito-sel')?.value.trim() || '';
+  const anioSel  = document.getElementById('slic-anio-sel')?.value || ''; // '23','24','25','26'
+
+  const q = {
+    nombre:    getNombre(),
+    ni:        document.getElementById('slic-ni')?.value.trim().toLowerCase() || '',
+    dni:       document.getElementById('slic-dni')?.value.trim().toLowerCase() || '',
+    jerarquia: document.getElementById('slic-jerarquia')?.value.trim().toLowerCase() || '',
+    articulo:  document.getElementById('slic-articulo')?.value.trim().toLowerCase() || '',
+    ref:       document.getElementById('slic-ref')?.value.trim().toLowerCase() || ''
+  };
+
+  const res = licencias.filter(r => {
+
+    // DISTRITO — comparar ambos como string sin espacios
+    if (distrSel) {
+      const dist = String(r.distrito||'').trim();
+      if (dist !== distrSel) return false;
+    }
+
+    // AÑO — filtrar por año de la fecha de salida (dd/mm/yy)
+    if (anioSel) {
+      const fecha = normalizarFecha(r.fechaSalida || '');
+      const partes = fecha.split('/');
+      if (partes.length < 3) return false;
+      // partes[2] es el año en 2 dígitos (ej: '23')
+      const anioFecha = partes[2].padStart(2,'0');
+      if (anioFecha !== anioSel) return false;
+    }
+
+    // MES — extraer de fechaSalida formato dd/mm/yy
+    if (mes) {
+      const fecha = normalizarFecha(r.fechaSalida || '');
+      const partes = fecha.split('/');
+      if (partes.length < 2) return false;
+      if (partes[1].padStart(2,'0') !== mes) return false;
+    }
+
+    // ARTÍCULO — buscar coincidencia parcial
+    if (q.articulo) {
+      const art = String(r.articulo||'').toLowerCase().trim();
+      if (!art.includes(q.articulo)) return false;
+    }
+
+    // TEXTO LIBRE
+    if (q.nombre    && !(r.nombre||'').toLowerCase().includes(q.nombre)) return false;
+    if (q.ni        && !(r.ni||'').toLowerCase().includes(q.ni)) return false;
+    if (q.dni       && !(r.dni||'').toLowerCase().includes(q.dni)) return false;
+    if (q.jerarquia && !(r.jerarquia||'').toLowerCase().includes(q.jerarquia)) return false;
+    if (q.ref       && !(r.referencia||'').toLowerCase().includes(q.ref)) return false;
+
+    return true;
+  });
+
+  pdfResultados.lic = res;
+  const rc = document.getElementById('resultCount-lic');
+  const meses = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const descMes  = mes      ? ` · ${meses[parseInt(mes)]}`   : '';
+  const descDist = distrSel ? ` · Distrito ${distrSel}`      : '';
+  const descAnio = anioSel  ? ` · 20${anioSel}`              : '';
+  rc.textContent = `Se encontraron ${res.length} de ${licencias.length} licencias${descMes}${descDist}${descAnio}`;
+  rc.classList.remove('hidden');
+  cargarTablaLicencias(res);
+}
+
+function limpiarFiltrosRapidos() {
+  const ids = ['slic-mes','slic-distrito-sel','slic-anio-sel','slic-nombre','slic-ni','slic-dni','slic-jerarquia','slic-articulo','slic-ref'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+  });
+  document.getElementById('resultCount-lic').classList.add('hidden');
+  mostrarEstadoInicial('lic');
+}
+
+function limpiarBusquedaLic() {
+  ['slic-nombre','slic-ni','slic-dni','slic-jerarquia','slic-articulo','slic-distrito','slic-anio','slic-fecha','slic-ref']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('resultCount-lic').classList.add('hidden');
+}
+
+// ==========================================
+// LICENCIAS — DETALLE MODAL
+// ==========================================
+function verDetalleLicencia(id) {
+  const r = licencias.find(x => x.id === id);
+  if (!r) return;
+  modalCurrentId = id;
+  modalCurrentType = 'lic';
+
+  const overlay  = document.getElementById('modalOverlay');
+  const title    = document.getElementById('modalTitle');
+  const body     = document.getElementById('modalBody');
+  const btnElim  = document.getElementById('btnEliminarModal');
+  btnElim.onclick = () => eliminarRegistro('lic', id);
+
+  const prevTabs = body.querySelector('.modal-tabs');
+  if (prevTabs) prevTabs.remove();
+
+  title.textContent = '📅 Detalle de Licencia';
+  body.innerHTML = `<div class="detail-grid" style="padding:16px">
+    ${dItem('Distrito', r.distrito ? 'Distrito ' + r.distrito : '')}
+    ${dItem('Nombre', r.nombre, true)}
+    ${dItem('NI', r.ni)}
+    ${dItem('DNI', r.dni)}
+    ${dItem('Jerarquía', r.jerarquia)}
+    ${dItem('Artículo / Inciso', r.articulo)}
+    ${dItem('Fecha de Salida', normalizarFecha(r.fechaSalida))}
+    ${dItem('Fecha Final', normalizarFecha(r.fechaFinal))}
+    ${dItem('Días Hábiles', r.diasHabiles)}
+    ${dItem('Días Corridos', r.diasCorridos)}
+    ${dItem('Fracción', r.fraccion)}
+    ${dItem('Año', r.anio)}
+    ${dItem('Referencia', r.referencia, true)}
+  </div>`;
+
+  const footer = overlay.querySelector('div[style*="padding:0 20px"]');
+  const prevEdit = footer.querySelector('.btn-edit-lic');
+  if (prevEdit) prevEdit.remove();
+  const btnEdit = document.createElement('button');
+  btnEdit.className = 'btn btn-outline btn-sm btn-edit-lic';
+  btnEdit.innerHTML = '✏️ Editar';
+  btnEdit.onclick = () => editarLicencia(id);
+  footer.insertBefore(btnEdit, footer.firstChild);
+
+  overlay.classList.remove('hidden');
+}
+
+function editarLicencia(id) {
+  const r = licencias.find(x => x.id === id);
+  if (!r) return;
+  cerrarModal();
+  switchModule('licencias');
+  switchTab('lic', 'form');
+
+  // Rellenar formulario
+  document.getElementById('lic-nombre').value    = r.nombre||'';
+  document.getElementById('lic-ni').value        = r.ni||'';
+  document.getElementById('lic-dni').value       = r.dni||'';
+  document.getElementById('lic-jerarquia').value = r.jerarquia||'';
+  document.getElementById('lic-articulo').value  = r.articulo||'';
+  document.getElementById('lic-dias-habiles').value  = r.diasHabiles||'';
+  document.getElementById('lic-dias-corridos').value = r.diasCorridos||'';
+  document.getElementById('lic-anio').value      = r.anio||'';
+  document.getElementById('lic-referencia').value = r.referencia||'';
+
+  // Fechas — convertir dd/mm/yy a yyyy-mm-dd para el input date
+  const toISO = (f) => {
+    if (!f) return '';
+    const p = f.split('/');
+    if (p.length < 3) return '';
+    const yy = p[2].length === 2 ? '20'+p[2] : p[2];
+    return `${yy}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+  };
+  document.getElementById('lic-fecha-salida').value = toISO(r.fechaSalida);
+  document.getElementById('lic-fecha-final').value  = toISO(r.fechaFinal);
+
+  if (r.distrito) {
+    const radio = document.querySelector(`input[name="lic-distrito"][value="${r.distrito}"]`);
+    if (radio) radio.checked = true;
+  }
+  if (r.fraccion) {
+    const radio = document.querySelector(`input[name="lic-fraccion"][value="${r.fraccion}"]`);
+    if (radio) radio.checked = true;
+  }
+
+  // Marcar como edición
+  document.getElementById('lic-form').dataset.editId = id;
+  const card = document.querySelector('#lic-form .card-header h2');
+  if (card) card.textContent = '✏️ Editar Licencia';
+  toast('ℹ️ Editando licencia — guardá para confirmar cambios', 'info');
+}
+
+
+// ==========================================
+// GENERADOR DE PDF
+// ==========================================
+
+// Estado de los últimos resultados visibles
+let pdfResultados = { exp: null, elem: null, emp: null, lic: null };
+
+// Interceptar resultados al buscar para tenerlos disponibles al PDF
+const _buscarExpOrig = buscarExpedientes;
+buscarExpedientes = function() {
+  _buscarExpOrig();
+  // capturar últimos resultados
+  const q = {
+    empleado: v('s-empleado'), expediente: v('s-expediente'), resolucion: v('s-resolucion'),
+    fecha: v('s-fecha'), foja: v('s-foja'), art: v('s-art'),
+    ospe: v('s-ospe'), distrito: v('s-distrito'), ref: v('s-ref')
+  };
+  pdfResultados.exp = expedientes.filter(r => {
+    if (q.empleado && !r.empleado?.toLowerCase().includes(q.empleado)) return false;
+    if (q.expediente && !r.expediente?.toLowerCase().includes(q.expediente)) return false;
+    if (q.resolucion && !(r.resoluciones?.toLowerCase().includes(q.resolucion)||r.resoluciones2?.toLowerCase().includes(q.resolucion))) return false;
+    if (q.fecha && !r.fecha?.includes(q.fecha)) return false;
+    if (q.foja && !r.foja?.includes(q.foja)) return false;
+    if (q.art && !r.articulos?.toLowerCase().includes(q.art)) return false;
+    if (q.ospe && !r.ospe?.includes(q.ospe)) return false;
+    if (q.distrito && String(r.distrito||'').trim() !== q.distrito) return false;
+    if (q.ref && !r.referencia?.toLowerCase().includes(q.ref)) return false;
+    return true;
+  });
+};
+
+const _buscarElemOrig = buscarElementos;
+buscarElementos = function() {
+  _buscarElemOrig();
+  const q = { elemento: v('se-elemento'), entregaa: v('se-entregaa'), fecha: v('se-fecha'), como: v('se-como'), obs: v('se-obs') };
+  pdfResultados.elem = elementos.filter(r => {
+    if (q.elemento && !r.elemento?.toLowerCase().includes(q.elemento)) return false;
+    if (q.entregaa && !r.entregaa?.toLowerCase().includes(q.entregaa)) return false;
+    if (q.fecha && !r.fecha?.includes(q.fecha)) return false;
+    if (q.como && !r.como?.toLowerCase().includes(q.como)) return false;
+    if (q.obs && !r.obs?.toLowerCase().includes(q.obs)) return false;
+    return true;
+  });
+};
+
+const _buscarEmpOrig = buscarEmpleados;
+buscarEmpleados = function() {
+  _buscarEmpOrig();
+  const q = { nombre: v('semp-nombre'), dni: v('semp-dni'), ni: v('semp-ni'), jerarquia: v('semp-jerarquia'), distrito: v('semp-distrito'), arma: v('semp-arma') };
+  pdfResultados.emp = empleados.filter(e => {
+    if (q.nombre && !e.nombre?.toLowerCase().includes(q.nombre)) return false;
+    if (q.dni && !e.dni?.includes(q.dni)) return false;
+    if (q.ni && !e.ni?.includes(q.ni)) return false;
+    if (q.jerarquia && !e.jerarquia?.toLowerCase().includes(q.jerarquia)) return false;
+    if (q.distrito && String(e.distrito||'').trim() !== q.distrito) return false;
+    if (q.arma && !e.arma?.serie?.toLowerCase().includes(q.arma)) return false;
+    return true;
+  });
+};
+
+function generarPDF(tipo) {
+  const { jsPDF } = window.jspdf;
+  if (!jsPDF) { toast('⚠️ Librería PDF no cargada aún, intentá de nuevo', 'error'); return; }
+
+  // Datos a exportar: filtrados si hay búsqueda activa, sino todos
+  let datos;
+  let titulo;
+  switch(tipo) {
+    case 'exp':  datos = pdfResultados.exp  ?? expedientes; titulo = 'LIBRO DE EXPEDIENTES'; break;
+    case 'elem': datos = pdfResultados.elem ?? elementos;   titulo = 'ELEMENTOS DE ENTREGA'; break;
+    case 'emp':  datos = pdfResultados.emp  ?? empleados;   titulo = 'DATOS PERSONALES DEL PERSONAL'; break;
+    case 'lic':  datos = pdfResultados.lic  ?? licencias;   titulo = 'LICENCIAS DEL PERSONAL'; break;
+  }
+
+  if (!datos || !datos.length) { toast('⚠️ No hay datos para exportar', 'error'); return; }
+
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const fechaHoy = new Date().toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  const ancho = doc.internal.pageSize.getWidth();
+
+  function encabezado(doc, titulo, pag, total) {
+    doc.setFillColor(26, 86, 160);
+    doc.rect(0, 0, ancho, 18, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(13);
+    doc.setFont('helvetica','bold');
+    doc.text(titulo, 10, 11);
+    doc.setFontSize(9);
+    doc.setFont('helvetica','normal');
+    doc.text(`Generado: ${fechaHoy}`, ancho - 10, 11, { align: 'right' });
+    if (total) doc.text(`${datos.length} registros`, ancho/2, 11, { align: 'center' });
+    if (pag) doc.text(`Pág. ${pag}`, ancho - 10, 16, { align: 'right' });
+    doc.setTextColor(0,0,0);
+  }
+
+  function subtitulo(doc, texto, y) {
+    doc.setFillColor(230, 240, 255);
+    doc.rect(10, y, ancho - 20, 7, 'F');
+    doc.setFontSize(9);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(26,86,160);
+    doc.text(texto, 13, y + 5);
+    doc.setTextColor(0,0,0);
+    doc.setFont('helvetica','normal');
+  }
+
+  // ---- PÁGINA 1: TABLA RESUMEN ----
+  encabezado(doc, `D.G.C.O.G.J. — ${titulo}`, null, true);
+  doc.setFontSize(9); doc.setFont('helvetica','bold');
+  doc.setTextColor(80,80,80);
+  doc.text('TABLA RESUMEN', 10, 24);
+  doc.setFont('helvetica','normal'); doc.setTextColor(0,0,0);
+
+  let tableHead = [];
+  let tableBody = [];
+
+  if (tipo === 'exp') {
+    tableHead = [['FECHA','FOJA','EXPEDIENTE','EMPLEADO','DIST.','RESOLUCIONES','OSPE','ART.','VIENE DE','ENTREGADO A']];
+    tableBody = datos.map(r => [r.fecha||'', r.foja||'', r.expediente||'', r.empleado||'', r.distrito?'D'+r.distrito:'', r.resoluciones||'', r.ospe||'', r.articulos||'', r.vienede||'', r.entregadoa||'']);
+  } else if (tipo === 'elem') {
+    tableHead = [['F. CARGA','ELEMENTO','F. RECIBIDO','ENTREGA A','F. ENTREGA','CÓMO SE ENTREGA','OBSERVACIONES']];
+    tableBody = datos.map(r => [r.fecha||'', r.elemento||'', r.fechaRecibido||'', r.entregaa||'', r.fechaEntrega||'', r.como||'', r.obs||'']);
+  } else if (tipo === 'emp') {
+    tableHead = [['NOMBRE','DNI','NI','JERARQUÍA','DISTRITO','TELÉFONO','SANGRE','ARMA S/N','CHALECO S/N']];
+    tableBody = datos.map(r => [r.nombre||'', r.dni||'', r.ni||'', r.jerarquia||'', r.distrito?'D'+r.distrito:'', r.telefono||'', r.sangre||'', r.arma?.serie||'', r.chaleco?.serie||'']);
+  } else if (tipo === 'lic') {
+    tableHead = [['DIST.','NI','DNI','JERARQUÍA','ARTÍCULO','F. SALIDA','F. FINAL','D. HÁB.','D. COR.','FRACCIÓN','AÑO']];
+    tableBody = datos.map(r => [r.distrito?'D'+r.distrito:'', r.ni||'', r.dni||'', r.jerarquia||'', r.articulo||'', r.fechaSalida||'', r.fechaFinal||'', r.diasHabiles||'', r.diasCorridos||'', r.fraccion||'', r.anio||'']);
+  }
+
+  doc.autoTable({
+    head: tableHead,
+    body: tableBody,
+    startY: 28,
+    styles: { fontSize: 7, cellPadding: 2, overflow: 'ellipsize' },
+    headStyles: { fillColor: [26,86,160], textColor: 255, fontStyle: 'bold', fontSize: 7 },
+    alternateRowStyles: { fillColor: [240,246,255] },
+    margin: { left: 10, right: 10 },
+    didDrawPage: (data) => {
+      const pag = doc.internal.getCurrentPageInfo().pageNumber;
+      encabezado(doc, `D.G.C.O.G.J. — ${titulo}`, pag, true);
+    }
+  });
+
+  // ---- PÁGINAS FICHAS INDIVIDUALES ----
+  datos.forEach((r, idx) => {
+    doc.addPage();
+    encabezado(doc, `D.G.C.O.G.J. — ${titulo}`, null, false);
+
+    let y = 26;
+    const col1 = 10, col2 = ancho/2 + 5;
+    const lineH = 8;
+
+    function campo(doc, label, valor, x, yy, fullWidth) {
+      doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(100,100,100);
+      doc.text(label.toUpperCase(), x, yy);
+      doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(0,0,0);
+      const maxW = fullWidth ? (ancho - 20) : (ancho/2 - 15);
+      const lines = doc.splitTextToSize(valor || '—', maxW);
+      doc.text(lines, x, yy + 4);
+      return yy + 4 + (lines.length * 4.5);
+    }
+
+    function lineDiv(doc, y) {
+      doc.setDrawColor(200,200,200);
+      doc.line(10, y, ancho-10, y);
+      return y + 3;
+    }
+
+    // Badge número de ficha
+    doc.setFillColor(26,86,160);
+    doc.roundedRect(ancho-30, 20, 20, 8, 2, 2, 'F');
+    doc.setTextColor(255,255,255); doc.setFontSize(8); doc.setFont('helvetica','bold');
+    doc.text(`${idx+1} / ${datos.length}`, ancho-20, 25.5, { align: 'center' });
+    doc.setTextColor(0,0,0);
+
+    if (tipo === 'exp') {
+      subtitulo(doc, '📁 DATOS DEL EXPEDIENTE', y); y += 10;
+      let yL = campo(doc,'Fecha',r.fecha,col1,y);
+      let yR = campo(doc,'N° de Foja',r.foja,col2,y);
+      y = Math.max(yL,yR) + 2;
+      y = campo(doc,'Expediente',r.expediente,col1,y,true) + 2;
+      yL = campo(doc,'Empleado',r.empleado,col1,y);
+      yR = campo(doc,'Distrito',r.distrito?'Distrito '+r.distrito:'',col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Resoluciones',r.resoluciones,col1,y);
+      yR = campo(doc,'Resoluciones (2)',r.resoluciones2,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Radiogramas',r.radiogramas,col1,y);
+      yR = campo(doc,'OSPE',r.ospe,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Artículos',r.articulos,col1,y);
+      yR = campo(doc,'Foja',r.foja,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Viene de',r.vienede,col1,y);
+      yR = campo(doc,'Entregado a',r.entregadoa,col2,y);
+      y = Math.max(yL,yR) + 2;
+      y = lineDiv(doc,y);
+      y = campo(doc,'Logística',r.logistica,col1,y,true) + 2;
+      y = campo(doc,'Otro',r.otro,col1,y,true) + 2;
+      y = campo(doc,'Referencia',r.referencia,col1,y,true);
+
+    } else if (tipo === 'elem') {
+      subtitulo(doc, '📦 DATOS DEL ELEMENTO', y); y += 10;
+      let yL = campo(doc,'Fecha de Carga',r.fecha,col1,y);
+      let yR = campo(doc,'Fecha de Recepción',r.fechaRecibido,col2,y);
+      y = Math.max(yL,yR) + 2;
+      y = campo(doc,'Elemento',r.elemento,col1,y,true) + 2;
+      yL = campo(doc,'Entrega a',r.entregaa,col1,y);
+      yR = campo(doc,'Fecha de Entrega',r.fechaEntrega,col2,y);
+      y = Math.max(yL,yR) + 2;
+      y = campo(doc,'Cómo se entrega',r.como,col1,y,true) + 2;
+      y = lineDiv(doc,y);
+      y = campo(doc,'Observaciones',r.obs,col1,y,true);
+
+    } else if (tipo === 'emp') {
+      subtitulo(doc, '👤 DATOS PERSONALES', y); y += 10;
+      let yL = campo(doc,'Nombre Completo',r.nombre,col1,y);
+      let yR = campo(doc,'Jerarquía',r.jerarquia,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'DNI',r.dni,col1,y);
+      yR = campo(doc,'NI',r.ni,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Distrito',r.distrito?'Distrito '+r.distrito:'',col1,y);
+      yR = campo(doc,'Grupo Sanguíneo',r.sangre,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Teléfono',r.telefono,col1,y);
+      yR = campo(doc,'Fecha de Nac.',r.nacimiento?formatearFecha(r.nacimiento):'',col2,y);
+      y = Math.max(yL,yR) + 2;
+      y = campo(doc,'Dirección Personal',r.direccion,col1,y,true) + 2;
+      y = campo(doc,'Comisaría / Jurisdicción',r.comisaria,col1,y,true) + 2;
+      y = lineDiv(doc,y);
+      subtitulo(doc,'🔫 ARMA PROVISTA',y); y += 10;
+      yL = campo(doc,'Marca',r.arma?.marca,col1,y);
+      yR = campo(doc,'Modelo',r.arma?.modelo,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'N° de Serie',r.arma?.serie,col1,y);
+      yR = campo(doc,'Cargadores',r.arma?.cargadores,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Municiones',r.arma?.municiones,col1,y);
+      yR = campo(doc,'Remarque',r.arma?.remarque,col2,y);
+      y = Math.max(yL,yR) + 4;
+      y = lineDiv(doc,y);
+      subtitulo(doc,'🦺 CHALECO PROVISTO',y); y += 10;
+      yL = campo(doc,'Marca',r.chaleco?.marca,col1,y);
+      yR = campo(doc,'Modelo',r.chaleco?.modelo,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'N° de Serie',r.chaleco?.serie,col1,y);
+      yR = campo(doc,'Nivel',r.chaleco?.nivel,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Talle',r.chaleco?.talle,col1,y);
+      yR = campo(doc,'Lote',r.chaleco?.lote,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Fecha Fabricación',r.chaleco?.fabricacion?formatearFecha(r.chaleco.fabricacion):'',col1,y);
+      yR = campo(doc,'Fecha Vencimiento',r.chaleco?.vencimiento?formatearFecha(r.chaleco.vencimiento):'',col2,y);
+      y = Math.max(yL,yR);
+
+    } else if (tipo === 'lic') {
+      subtitulo(doc, '📅 DATOS DE LICENCIA', y); y += 10;
+      let yL = campo(doc,'Distrito',r.distrito?'Distrito '+r.distrito:'',col1,y);
+      let yR = campo(doc,'Año',r.anio,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'NI',r.ni,col1,y);
+      yR = campo(doc,'DNI',r.dni,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Jerarquía',r.jerarquia,col1,y);
+      yR = campo(doc,'Artículo / Inciso',r.articulo,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Fecha de Salida',r.fechaSalida,col1,y);
+      yR = campo(doc,'Fecha Final',r.fechaFinal,col2,y);
+      y = Math.max(yL,yR) + 2;
+      yL = campo(doc,'Días Hábiles',r.diasHabiles,col1,y);
+      yR = campo(doc,'Días Corridos',r.diasCorridos,col2,y);
+      y = Math.max(yL,yR) + 2;
+      y = campo(doc,'Fracción',r.fraccion,col1,y,true) + 2;
+      y = lineDiv(doc,y);
+      y = campo(doc,'Referencia',r.referencia,col1,y,true);
+    }
+
+    // Pie de ficha
+    doc.setDrawColor(200,200,200);
+    doc.line(10, 195, ancho-10, 195);
+    doc.setFontSize(7); doc.setTextColor(150,150,150); doc.setFont('helvetica','normal');
+    doc.text('D.G.C.O.G.J. — Distrito Judicial N°5 — Rafaela, Santa Fe', ancho/2, 200, { align:'center' });
+  });
+
+  const nombre = `${titulo.replace(/ /g,'_')}_${new Date().toISOString().slice(0,10)}.pdf`;
+  doc.save(nombre);
+  toast(`📄 PDF generado: ${datos.length} registros`, 'success');
+}
+
+</script>
+</body>
+</html>
