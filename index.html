@@ -796,10 +796,10 @@
           <!-- Distrito -->
           <div class="field">
             <label>🏛️ Distrito</label>
-            <div class="radio-group">
-              <label class="radio-item"><input type="radio" name="ef-distrito" value="5"> Distrito 5</label>
-              <label class="radio-item"><input type="radio" name="ef-distrito" value="10"> Distrito 10</label>
-              <label class="radio-item"><input type="radio" name="ef-distrito" value="15"> Distrito 15</label>
+            <div class="checkbox-group">
+              <label class="checkbox-item"><input type="checkbox" class="ef-distrito-cb" value="5"> Distrito 5</label>
+              <label class="checkbox-item"><input type="checkbox" class="ef-distrito-cb" value="10"> Distrito 10</label>
+              <label class="checkbox-item"><input type="checkbox" class="ef-distrito-cb" value="15"> Distrito 15</label>
             </div>
           </div>
 
@@ -917,7 +917,7 @@
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--gray-200)">
         <div style="flex:1;min-width:130px">
           <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">📅 Mes de carga</label>
-          <select id="s-mes" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;background:white;outline:none" onchange="buscarExpedientes()">
+          <select id="s-mes" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;background:white;outline:none">
             <option value="">— Todos los meses —</option>
             <option value="01">Enero</option>
             <option value="02">Febrero</option>
@@ -935,7 +935,7 @@
         </div>
         <div style="flex:1;min-width:110px">
           <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">📅 Año</label>
-          <select id="s-anio" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;background:white;outline:none" onchange="buscarExpedientes()">
+          <select id="s-anio" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;background:white;outline:none">
             <option value="">— Todos —</option>
             <option value="22">2022</option>
             <option value="23">2023</option>
@@ -946,7 +946,7 @@
         </div>
         <div style="flex:1;min-width:130px">
           <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">📌 Estado</label>
-          <select id="s-estado" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;background:white;outline:none" onchange="buscarExpedientes()">
+          <select id="s-estado" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;background:white;outline:none">
             <option value="">— Todos —</option>
             <option value="pendiente">🟡 Pendientes</option>
             <option value="finalizado">🟢 Finalizados</option>
@@ -957,18 +957,28 @@
         </div>
       </div>
 
+      <!-- DISTRITO MÚLTIPLE -->
+      <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--gray-200)">
+        <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px">🏛️ Distrito</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" class="filtro-distrito" value="5"> Distrito 5</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-distrito" value="10"> Distrito 10</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-distrito" value="15"> Distrito 15</label>
+        </div>
+      </div>
+
       <!-- FILTRO PRESENCIA DE CAMPO -->
       <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--gray-200)">
         <label style="font-size:10px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px">✅ Mostrar solo registros que tengan:</label>
         <div class="checkbox-group">
-          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="ospe" onchange="buscarExpedientes()"> OSPE</label>
-          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="resoluciones" onchange="buscarExpedientes()"> Resolución</label>
-          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="radiogramas" onchange="buscarExpedientes()"> Radiogramas</label>
-          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="articulos" onchange="buscarExpedientes()"> Artículo</label>
-          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="expediente" onchange="buscarExpedientes()"> Expediente</label>
-          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="logistica" onchange="buscarExpedientes()"> Logística</label>
-          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="entregadoa" onchange="buscarExpedientes()"> Entregado a</label>
-          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="referencia" onchange="buscarExpedientes()"> Referencia</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="ospe"> OSPE</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="resoluciones"> Resolución</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="radiogramas"> Radiogramas</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="articulos"> Artículo</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="expediente"> Expediente</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="logistica"> Logística</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="entregadoa"> Entregado a</label>
+          <label class="checkbox-item"><input type="checkbox" class="filtro-campo" value="referencia"> Referencia</label>
         </div>
       </div>
 
@@ -995,11 +1005,14 @@
           <input type="text" id="s-ospe" placeholder="OSPE">
         </div>
         <div class="search-input-wrap">
-          <input type="text" id="s-distrito" placeholder="Distrito (5/10/15)">
-        </div>
-        <div class="search-input-wrap">
           <input type="text" id="s-ref" placeholder="Referencia / texto libre">
         </div>
+      </div>
+      <div class="search-btn-row">
+        <button class="btn btn-primary btn-sm" onclick="buscarExpedientes()">🔍 Buscar</button>
+        <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosExp(); cargarTablaExpedientes(expedientes)">↩ Mostrar todos</button>
+        <button class="btn btn-outline btn-sm" onclick="sincronizarDesdeSheets()">🔄 Actualizar desde Sheets</button>
+        <button class="btn btn-sm" style="background:#c0392b;color:white" onclick="generarPDF('exp')">📄 Generar PDF</button>
       </div>
       <div id="resultCount-exp" class="result-count hidden"></div>
     </div>
@@ -1939,8 +1952,9 @@ function autoFillExpediente(nombre) {
 
 function aplicarDatosExpediente(emp) {
   if (emp.distrito) {
-    const radio = document.querySelector(`input[name="ef-distrito"][value="${emp.distrito}"]`);
-    if (radio) radio.checked = true;
+    document.querySelectorAll('.ef-distrito-cb').forEach(cb => cb.checked = false);
+    const cb = document.querySelector(`.ef-distrito-cb[value="${emp.distrito}"]`);
+    if (cb) cb.checked = true;
   }
   toast(`✅ Distrito cargado: Distrito ${emp.distrito} — ${emp.nombre}`, 'success');
 }
@@ -2057,7 +2071,7 @@ function guardarExpediente() {
   const expediente = document.getElementById('ef-expediente').value.trim();
   if (!fecha) { toast('⚠️ La fecha es obligatoria', 'error'); return; }
 
-  const distritoEl = document.querySelector('input[name="ef-distrito"]:checked');
+  const distritosCb = [...document.querySelectorAll('.ef-distrito-cb:checked')].map(cb => cb.value);
   const arts = [...document.querySelectorAll('.ef-art:checked')].map(cb => cb.value);
   const artExtra = document.getElementById('ef-art-extra').value.trim();
   const artStr = [...arts, artExtra].filter(Boolean).join(', ');
@@ -2069,7 +2083,7 @@ function guardarExpediente() {
     fechaISO: fecha,
     foja: val('ef-foja'),
     expediente: val('ef-expediente'),
-    distrito: distritoEl ? distritoEl.value : '',
+    distrito: distritosCb.join('+'),
     empleado: selectedEmpleados.join(' / '),
     resoluciones: val('ef-resoluciones'),
     radiogramas: val('ef-radiogramas'),
@@ -2120,7 +2134,7 @@ function limpiarExpediente() {
   document.getElementById('ef-referencia').value = '';
   document.getElementById('ef-vienede').value = '';
   document.getElementById('ef-entregadoa').value = '';
-  document.querySelectorAll('input[name="ef-distrito"]').forEach(r => r.checked = false);
+  document.querySelectorAll('.ef-distrito-cb').forEach(cb => cb.checked = false);
   document.querySelectorAll('.ef-art').forEach(cb => cb.checked = false);
   selectedEmpleados = [];
   renderTags();
@@ -2253,6 +2267,9 @@ function buscarExpedientes() {
   const anio   = document.getElementById('s-anio')?.value || '';
   const estado = document.getElementById('s-estado')?.value || '';
 
+  // Distritos tildados
+  const distritosTildados = [...document.querySelectorAll('.filtro-distrito:checked')].map(cb => cb.value);
+
   // Campos tildados (filtro presencia)
   const camposTildados = [...document.querySelectorAll('.filtro-campo:checked')].map(cb => cb.value);
 
@@ -2264,7 +2281,6 @@ function buscarExpedientes() {
     foja:       document.getElementById('s-foja')?.value.trim() || '',
     art:        document.getElementById('s-art')?.value.trim().toLowerCase() || '',
     ospe:       document.getElementById('s-ospe')?.value.trim() || '',
-    distrito:   document.getElementById('s-distrito')?.value.trim() || '',
     ref:        document.getElementById('s-ref')?.value.trim().toLowerCase() || ''
   };
 
@@ -2276,7 +2292,14 @@ function buscarExpedientes() {
     if (anio && (partes.length < 3 || partes[2].slice(-2) !== anio)) return false;
     if (estado && (r.estado || 'pendiente') !== estado) return false;
 
-    // Filtro presencia: si hay campos tildados, el registro debe tener AL MENOS UNO con valor
+    // Distrito múltiple — si hay alguno tildado, el registro debe coincidir con UNO
+    if (distritosTildados.length > 0) {
+      const distritosRegistro = String(r.distrito||'').split('+').map(d => d.trim());
+      const hayCoincidencia = distritosTildados.some(d => distritosRegistro.includes(d));
+      if (!hayCoincidencia) return false;
+    }
+
+    // Filtro presencia de campo
     if (camposTildados.length > 0) {
       const tieneAlguno = camposTildados.some(campo => {
         const val = String(r[campo] || '').trim();
@@ -2292,7 +2315,6 @@ function buscarExpedientes() {
     if (q.foja       && !(r.foja||'').includes(q.foja)) return false;
     if (q.art        && !(r.articulos||'').toLowerCase().includes(q.art)) return false;
     if (q.ospe       && !(r.ospe||'').includes(q.ospe)) return false;
-    if (q.distrito   && String(r.distrito||'').trim() !== q.distrito) return false;
     if (q.ref        && !(r.referencia||'').toLowerCase().includes(q.ref)) return false;
     return true;
   });
@@ -2302,9 +2324,10 @@ function buscarExpedientes() {
   const descMes    = mes    ? ` · ${meses[parseInt(mes)]}` : '';
   const descAnio   = anio   ? ` · 20${anio}` : '';
   const descEstado = estado ? ` · ${estado === 'pendiente' ? '🕐 Pendientes' : '✅ Finalizados'}` : '';
+  const descDist   = distritosTildados.length > 0 ? ` · Distrito ${distritosTildados.join('+')}` : '';
   const descCampos = camposTildados.length > 0 ? ` · Con: ${camposTildados.join(', ')}` : '';
   const rc = document.getElementById('resultCount-exp');
-  rc.textContent = `Se encontraron ${res.length} de ${expedientes.length} registros${descMes}${descAnio}${descEstado}${descCampos}`;
+  rc.textContent = `Se encontraron ${res.length} de ${expedientes.length} registros${descMes}${descAnio}${descEstado}${descDist}${descCampos}`;
   rc.classList.remove('hidden');
   cargarTablaExpedientes(res);
 }
@@ -2313,9 +2336,10 @@ function limpiarFiltrosExp() {
   ['s-mes','s-anio','s-estado'].forEach(id => {
     const el = document.getElementById(id); if(el) el.selectedIndex = 0;
   });
-  ['s-empleado','s-expediente','s-resolucion','s-fecha','s-foja','s-art','s-ospe','s-distrito','s-ref']
+  ['s-empleado','s-expediente','s-resolucion','s-fecha','s-foja','s-art','s-ospe','s-ref']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   document.querySelectorAll('.filtro-campo').forEach(cb => cb.checked = false);
+  document.querySelectorAll('.filtro-distrito').forEach(cb => cb.checked = false);
   document.getElementById('resultCount-exp').classList.add('hidden');
 }
 
@@ -2478,10 +2502,13 @@ function editarExpediente(id) {
   document.getElementById('ef-vienede').value      = r.vienede || '';
   document.getElementById('ef-entregadoa').value   = r.entregadoa || '';
 
-  // Distrito
+  // Distrito (puede ser "5", "10+15", "5+10+15", etc)
+  document.querySelectorAll('.ef-distrito-cb').forEach(cb => cb.checked = false);
   if (r.distrito) {
-    const radio = document.querySelector(`input[name="ef-distrito"][value="${r.distrito}"]`);
-    if (radio) radio.checked = true;
+    r.distrito.split('+').forEach(d => {
+      const cb = document.querySelector(`.ef-distrito-cb[value="${d.trim()}"]`);
+      if (cb) cb.checked = true;
+    });
   }
 
   // Estado
