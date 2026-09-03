@@ -2850,33 +2850,55 @@ function mostrarEdadPreview() {
 
 function parsearFecha(val) {
   if (!val) return null;
-  const str = normalizarFecha(String(val));
-  if (!str) return null;
-  const p = str.split('/');
-  if (p.length < 3) return null;
-  const yy = p[2].length === 2 ? '20'+p[2] : p[2];
-  const d = new Date(parseInt(yy), parseInt(p[1])-1, parseInt(p[0]));
-  return isNaN(d) ? null : d;
+  const str = String(val).trim();
+  if (!str || str === 'undefined' || str === 'null') return null;
+
+  // Formato ISO yyyy-mm-dd
+  const iso = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return new Date(parseInt(iso[1]), parseInt(iso[2])-1, parseInt(iso[3]));
+
+  // Formato dd/mm/yy o dd/mm/yyyy
+  const slash = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (slash) {
+    const yy = slash[3].length === 2 ? 2000 + parseInt(slash[3]) : parseInt(slash[3]);
+    // Si el año resultante es futuro y era 2 dígitos, restar 100
+    const y = (yy > new Date().getFullYear() + 1 && slash[3].length === 2) ? yy - 100 : yy;
+    return new Date(y, parseInt(slash[2])-1, parseInt(slash[1]));
+  }
+
+  // Formato largo: "undefined/0300.../Thu Nov 24 1977 00:00:00 GMT"
+  // Buscar patrón: DiaSemana Mes DD YYYY
+  const meses = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  const m1 = str.match(/(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{4})/);
+  if (m1) return new Date(parseInt(m1[3]), meses[m1[1]], parseInt(m1[2]));
+
+  // Número serial Excel
+  const num = parseFloat(str);
+  if (!isNaN(num) && num > 10000 && num < 60000) {
+    return new Date(Math.round((num - 25569) * 86400 * 1000));
+  }
+
+  return null;
 }
 
 function calcularEdad(nacISO) {
   if (!nacISO) return 0;
-  const nac = parsearFecha(nacISO) || new Date(nacISO);
+  const nac = parsearFecha(nacISO);
   if (!nac || isNaN(nac)) return 0;
   const hoy = new Date();
   let edad = hoy.getFullYear() - nac.getFullYear();
   const m = hoy.getMonth() - nac.getMonth();
   if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
-  return edad;
+  return Math.abs(edad); // nunca negativo
 }
 
 function proximoCumple(nacISO) {
   if (!nacISO) return '';
-  const nac = parsearFecha(nacISO) || new Date(nacISO);
+  const nac = parsearFecha(nacISO);
   if (!nac || isNaN(nac)) return '';
   const hoy = new Date();
   let proxAnio = new Date(hoy.getFullYear(), nac.getMonth(), nac.getDate());
-  if (proxAnio < hoy) proxAnio.setFullYear(hoy.getFullYear() + 1);
+  if (proxAnio <= hoy) proxAnio.setFullYear(hoy.getFullYear() + 1);
   const diff = Math.ceil((proxAnio - hoy) / (1000*60*60*24));
   if (diff === 0) return '🎉 ¡Hoy cumple años!';
   if (diff === 1) return '🎂 Mañana cumple años';
@@ -2885,7 +2907,7 @@ function proximoCumple(nacISO) {
 
 function esCumpleaniosHoy(nacISO) {
   if (!nacISO) return false;
-  const nac = parsearFecha(nacISO) || new Date(nacISO);
+  const nac = parsearFecha(nacISO);
   if (!nac || isNaN(nac)) return false;
   const hoy = new Date();
   return hoy.getMonth() === nac.getMonth() && hoy.getDate() === nac.getDate();
@@ -3135,7 +3157,7 @@ function verDetalleEmpleado(id) {
       ${dItem('DNI', emp.dni)} ${dItem('NI', emp.ni)}
       ${dItem('CUIL', emp.cuil)} ${dItem('Email', emp.email)}
       ${dItem('Jerarquía', emp.jerarquia)} ${dItem('Distrito', emp.distrito ? 'Distrito '+emp.distrito : '')}
-      ${dItem('Fecha de Nacimiento', emp.nacimiento ? formatearFecha(emp.nacimiento) : '')}
+      ${dItem('Fecha de Nacimiento', normalizarFecha(emp.nacimiento||''))}
       ${dItem('Edad', edad !== null ? (edad+' años'+(esCumple?' 🎂 ¡Hoy cumple!':'')) : '')}
       ${dItem('Próximo cumpleaños', proxCumple, true)}
       ${dItem('Teléfono', emp.telefono)} ${dItem('Grupo sanguíneo', emp.sangre)}
